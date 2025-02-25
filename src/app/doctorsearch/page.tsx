@@ -45,6 +45,22 @@ const DoctorSearch = () => {
     }
   }, [searchQuery, currentPage]);
 
+  const generatePageNumbers = (current: number, total: number): number[] => {
+    const maxPagesToShow = 10;
+    let startPage = Math.max(1, current - 5);
+    let endPage = Math.min(total, current + 4);
+
+    if (current <= 5) {
+      startPage = 1;
+      endPage = Math.min(maxPagesToShow, total);
+    } else if (current >= total - 4) {
+      endPage = total;
+      startPage = Math.max(1, total - 9);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  };
+
   async function fetchDoctors(query: string, page: number) {
     setIsLoading(true);
     try {
@@ -111,6 +127,7 @@ const DoctorSearch = () => {
         <div className="mt-auto pb-8">
           <div className="scrollbar-hide overflow-x-auto">
             {isLoading && <div className="text-center py-4">Loading...</div>}
+            {error && <div className="text-center py-4 text-red-500">{error}</div>}           
             <div className="flex gap-4 pb-4">
               {doctors.map((doctor) => (
                 <div
@@ -124,6 +141,9 @@ const DoctorSearch = () => {
                         src={doctor.imagePath || "/placeholder.svg"}
                         alt={doctor.name}
                         className="h-48 w-48 rounded-xl object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/placeholder.svg";
+                        }}
                       />
                     </div>
                     <div className="flex flex-col flex-grow">
@@ -172,23 +192,61 @@ const DoctorSearch = () => {
 
           {/* Pagination Controls */}
           {doctors.length > 0 && (
-            <div className="flex justify-center gap-4 mt-4">
+            <div className="flex justify-center items-center mt-4">
+              {/* First Page Button */}
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1 || isLoading}
+                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
+              >
+                <span className="sr-only">First</span>
+                {"<<"}
+              </button>
+
+              {/* Previous Page Button */}
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1 || isLoading}
-                className="px-6 py-2 bg-[#14183E] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
+                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
               >
-                Back
+                <span className="sr-only">Previous</span>
+                {"<"}
               </button>
-              <span className="px-4 py-2">
-                Page {currentPage} of {totalPages}
-              </span>
+
+              {/* Page Number Buttons */}
+              {generatePageNumbers(currentPage, totalPages).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  disabled={isLoading}
+                  className={`px-3 py-2 min-w-[30px] transition-colors ${
+                    currentPage === page
+                      ? 'bg-[#14183E] text-white rounded-md'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-md'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              {/* Next Page Button */}
               <button
                 onClick={() => setCurrentPage(prev => prev + 1)}
                 disabled={currentPage >= totalPages || isLoading}
-                className="px-6 py-2 bg-[#14183E] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
+                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
               >
-                Next
+                <span className="sr-only">Next</span>
+                {">"}
+              </button>
+
+              {/* Last Page Button */}
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages || isLoading}
+                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
+              >
+                <span className="sr-only">Last</span>
+                {">>"}
               </button>
             </div>
           )}
