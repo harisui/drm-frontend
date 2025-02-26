@@ -30,13 +30,13 @@ const GenerateFullReport = () => {
                     <input
                       type="text"
                       id="cardName"
-                      className="w-full border-b-2 border-gray-300 pb-2 focus:outline-none focus:border-blue-500"
+                      className="w-full border-b-2 border-gray-300 pb-2 focus:outline-none focus:border-blue-500 pr-12"
                     />
-                    <img
-                      src="https://storage.googleapis.com/a1aa/image/PSBayi3U3rHA3TEqD3scHU54YeRvuxFFIoPXU9SyJWU.jpg"
-                      alt="Mastercard logo"
-                      className="absolute right-0 top-0 mt-2 h-8"
-                    />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="26" viewBox="0 0 37 26" fill="none" class="absolute right-2 top-1/2 transform -translate-y-1/2 h-8">
+                            <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FD0E0E"/>
+                            <ellipse cx="25.3283" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FFE249"/>
+                            <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FF4747" fill-opacity="0.65"/>
+                    </svg>
                   </div>
                 </div>
 
