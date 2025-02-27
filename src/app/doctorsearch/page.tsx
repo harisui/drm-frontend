@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from 'next/navigation';
 import * as React from "react";
 import { useState, useEffect } from "react";
 
@@ -24,6 +25,7 @@ const DoctorSearch = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -81,6 +83,10 @@ const DoctorSearch = () => {
       setIsLoading(false);
     }
   }
+
+  const handleGenerateReport = () => {
+    router.push('/generate-full-report');
+  };
 
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8 flex flex-col">
@@ -180,7 +186,7 @@ const DoctorSearch = () => {
                           </div>
                         </div>
                       </div>
-                      <button className="mt-4 w-full rounded-xl bg-[#14183E] py-3 text-center text-lg font-semibold text-white hover:bg-[#14183E]/90">
+                      <button onClick={() => router.push('/generate-full-report')} className="mt-4 w-full rounded-xl bg-[#14183E] py-3 text-center text-lg font-semibold text-white hover:bg-[#14183E]/90">
                         Generate Report
                       </button>
                     </div>

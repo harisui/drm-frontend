@@ -3,7 +3,7 @@ import React from "react";
 const GenerateFullReport = () => {
   return (
     <div className="bg-blue-50 min-h-screen p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-6xl font-bold mb-12 text-black">
           Get a full report on
           <br />
@@ -32,10 +32,10 @@ const GenerateFullReport = () => {
                       id="cardName"
                       className="w-full border-b-2 border-gray-300 pb-2 focus:outline-none focus:border-blue-500 pr-12"
                     />
-                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="26" viewBox="0 0 37 26" fill="none" class="absolute right-2 top-1/2 transform -translate-y-1/2 h-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="26" viewBox="0 0 37 26" fill="none" className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8">
                             <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FD0E0E"/>
                             <ellipse cx="25.3283" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FFE249"/>
-                            <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FF4747" fill-opacity="0.65"/>
+                            <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FF4747" fillOpacity="0.65"/>
                     </svg>
                   </div>
                 </div>
@@ -125,7 +125,7 @@ const GenerateFullReport = () => {
           {/* Right Side - Report Preview */}
           <div className="bg-white rounded-2xl p-6 shadow-sm flex-1 flex items-center justify-center">
             <img
-              src="https://storage.googleapis.com/a1aa/image/E2o3L1HZUx7Y-fVy6PjOISa9RqElFDtWFWZjSbuD5cY.jpg"
+              src="/report.JPG"
               alt="Placeholder for an image"
               className="w-full h-full object-cover rounded-xl"
             />
