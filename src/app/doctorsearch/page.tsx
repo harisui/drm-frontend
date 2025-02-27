@@ -25,13 +25,14 @@ const DoctorSearch = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter()
+  const router = useRouter();
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (searchText.trim()) {
         setSearchQuery(searchText);
-        setCurrentPage(1);
       } else {
         setDoctors([]);
         setSearchQuery("");
@@ -43,39 +44,42 @@ const DoctorSearch = () => {
 
   useEffect(() => {
     if (searchQuery.trim()) {
-      fetchDoctors(searchQuery, currentPage);
+      fetchDoctors(searchQuery);
     }
-  }, [searchQuery, currentPage]);
+  }, [searchQuery]);
 
-  const generatePageNumbers = (current: number, total: number): number[] => {
-    const maxPagesToShow = 10;
-    let startPage = Math.max(1, current - 5);
-    let endPage = Math.min(total, current + 4);
-
-    if (current <= 5) {
-      startPage = 1;
-      endPage = Math.min(maxPagesToShow, total);
-    } else if (current >= total - 4) {
-      endPage = total;
-      startPage = Math.max(1, total - 9);
-    }
-
-    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-  };
-
-  async function fetchDoctors(query: string, page: number) {
+  async function fetchDoctors(query: string) {
     setIsLoading(true);
+    setError(null);
+    setDoctors([]);
+    
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/doctors/ratemds-search?query=${encodeURIComponent(query)}&page=${page}`
+      const rateMDsResponse = await fetch(
+        `${API_BASE_URL}/doctors/ratemds-search?query=${encodeURIComponent(query)}`
       );
-      const data = await response.json();
-      
-      if (data.success) {
-        setDoctors(data.results);
-        setTotalPages(data.totalPages);
+      const rateMDsData = await rateMDsResponse.json();
+
+      if (rateMDsData.success && rateMDsData.results?.length > 0) {
+        const formattedRateMDsResults = rateMDsData.results.map((doc: Doctor) => ({
+          ...doc,
+          source: 'RateMDs'
+        }));
+        setDoctors(formattedRateMDsResults);
       } else {
-        setError(data.error || "No doctors found");
+        const realSelfResponse = await fetch(
+          `${API_BASE_URL}/doctors/realself-search?query=${encodeURIComponent(query)}`
+        );
+        const realSelfData = await realSelfResponse.json();
+
+        if (realSelfData.success && realSelfData.results?.length > 0) {
+          const formattedRealSelfResults = realSelfData.results.map((doc: Doctor) => ({
+            ...doc,
+            source: 'RealSelf'
+          }));
+          setDoctors(formattedRealSelfResults);
+        } else {
+          setError("No doctors found in either RateMDs or RealSelf");
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch doctors");
@@ -83,10 +87,6 @@ const DoctorSearch = () => {
       setIsLoading(false);
     }
   }
-
-  const handleGenerateReport = () => {
-    router.push('/generate-full-report');
-  };
 
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8 flex flex-col">
@@ -148,7 +148,7 @@ const DoctorSearch = () => {
                         alt={doctor.name}
                         className="h-48 w-48 rounded-xl object-cover"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/placeholder.svg";
+                          (e.target as HTMLImageElement).src = "/placeholder.png";
                         }}
                       />
                     </div>
@@ -196,66 +196,7 @@ const DoctorSearch = () => {
             </div>
           </div>
 
-          {/* Pagination Controls */}
-          {doctors.length > 0 && (
-            <div className="flex justify-center items-center mt-4">
-              {/* First Page Button */}
-              <button
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage === 1 || isLoading}
-                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
-              >
-                <span className="sr-only">First</span>
-                {"<<"}
-              </button>
 
-              {/* Previous Page Button */}
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1 || isLoading}
-                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
-              >
-                <span className="sr-only">Previous</span>
-                {"<"}
-              </button>
-
-              {/* Page Number Buttons */}
-              {generatePageNumbers(currentPage, totalPages).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  disabled={isLoading}
-                  className={`px-3 py-2 min-w-[30px] transition-colors ${
-                    currentPage === page
-                      ? 'bg-[#14183E] text-white rounded-md'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-md'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-
-              {/* Next Page Button */}
-              <button
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                disabled={currentPage >= totalPages || isLoading}
-                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
-              >
-                <span className="sr-only">Next</span>
-                {">"}
-              </button>
-
-              {/* Last Page Button */}
-              <button
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages || isLoading}
-                className="px-3 py-2 bg-[#14183E] text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#14183E]/90 transition-colors"
-              >
-                <span className="sr-only">Last</span>
-                {">>"}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </main>
