@@ -12,6 +12,7 @@ interface Doctor {
   city: string;
   state: string;
   imagePath: string | null;
+  slug: string; 
   // Add these if available in your API response, otherwise keep commented
   // yearsOfPractice?: number;
   // surgeonsCount?: number;
@@ -87,6 +88,13 @@ const DoctorSearch = () => {
       setIsLoading(false);
     }
   }
+
+  const navigateToPayment = (doctor: any, slug: string) => {
+    localStorage.setItem('doctor', JSON.stringify(doctor));
+    
+    router.push(`/generate-full-report?slug=${encodeURIComponent(slug)}`);
+  };
+  
 
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8 flex flex-col">
@@ -186,9 +194,12 @@ const DoctorSearch = () => {
                           </div>
                         </div>
                       </div>
-                      <button onClick={() => router.push('/generate-full-report')} className="mt-4 w-full rounded-xl bg-[#14183E] py-3 text-center text-lg font-semibold text-white hover:bg-[#14183E]/90">
-                        Generate Report
-                      </button>
+                      <button 
+                      onClick={() => navigateToPayment(doctor, doctor.slug)}
+                      className="mt-4 w-full rounded-xl bg-[#14183E] py-3 text-center text-lg font-semibold text-white hover:bg-[#14183E]/90"
+                    >
+                      Generate Report
+                    </button>
                     </div>
                   </div>
                 </div>

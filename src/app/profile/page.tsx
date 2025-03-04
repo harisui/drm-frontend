@@ -1,22 +1,98 @@
-import * as React from "react";
-import ProfileHeader from "./ProfileHeader";
-import KeyInsight from "./KeyInsight";
-import Testimonial from "./Testimonial";
+'use client'
+import { useEffect, useState } from "react";
 import OtherDoctorCard from "./OtherDoctorCard";
+import { Doctor } from "@/types";
 
+interface Report {
+  success: boolean;
+  positiveComments: {
+    first: { comment: string; date: string };
+    second: { comment: string; date: string };
+  };
+  negativeComment: { comment: string; date: string };
+  insights: string[];
+  summary: string;
+}
 
 const DoctorProfile = () => {
-  const insights = [
-    { title: "Talkative", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/3e6856f17acd5993f98f392c7f3bd8582ac1562aba225530db3e991dfbeb31b9?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Talkative icon" },
-    { title: "Bedside Manner", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/4b39c205c216880e98608584018d1651d656f2f3c1fee0044f2ffab8df974227?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Bedside Manner icon" },
-    { title: "Lorem ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/666994f52dc4036e61400399272daaadb3ab28d0acd6bdfbafb5573bc3850d23?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Lorem ipsum icon" },
-  ];
+  const [report, setReport] = useState<Report | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const testimonials = [
-    { author: "Agnes Remi", procedure: "Rhinoplasty", date: "June, 2024", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/188b383ec4cf7de95bfe5a20e9678e4e06f75a558ab9c8b580bef297555670d9?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Agnes Remi profile" },
-    { author: "Agnes Remi", procedure: "Rhinoplasty", date: "June, 2024", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/9b36d038a0a14d20abe4f6722ad31408a91769eebce9c92240d396a631271ec3?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Agnes Remi profile" },
-    { author: "Agnes Remi", procedure: "Rhinoplasty", date: "June, 2024", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/9ec28965abc87b7677c351bb24c9024b604d7ebda7adde722b17896579cb5771?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Agnes Remi profile" }
-  ];
+  const storedDoctor = localStorage.getItem('doctor');
+  const doctor: Doctor | null = storedDoctor ? JSON.parse(storedDoctor) : null;
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  useEffect(() => {
+    const fetchReport = async () => {
+      const slug = new URLSearchParams(window.location.search).get('slug');
+      if (!slug) {
+        setError('Invalid doctor slug');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/doctors/ratemds/report/${encodeURIComponent(slug)}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setReport(data);
+        } else {
+          setError('Failed to generate report');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchReport();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+  if (!doctor) {
+    return <div>No doctor data found.</div>;
+  }
+
+  const getRatingLabel = (rating: number): string => {
+    if (rating >= 4.5) return "Excellent";
+    if (rating >= 3.5) return "Good";
+    if (rating >= 2.5) return "Average";
+    return "Poor";
+  };
+
+  // Prepare testimonials from API response, handling null report
+  const testimonials = report ? [
+    {
+      author: "Anonymous",
+      date: report.positiveComments.first.date,
+      comment: report.positiveComments.first.comment,
+      imgSrc: "https://via.placeholder.com/62",
+      imgAlt: "Anonymous profile"
+    },
+    {
+      author: "Anonymous",
+      date: report.positiveComments.second.date,
+      comment: report.positiveComments.second.comment,
+      imgSrc: "https://via.placeholder.com/62",
+      imgAlt: "Anonymous profile"
+    },
+    {
+      author: "Anonymous",
+      date: report.negativeComment.date,
+      comment: report.negativeComment.comment,
+      imgSrc: "https://via.placeholder.com/62",
+      imgAlt: "Anonymous profile"
+    }
+  ] : [];
 
   const otherDoctors = [
     { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/5ce59305fa8206dc231d77f3c42313c9eafba1cec12bc965d6aaf3e1acaa3ad6?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
@@ -26,53 +102,115 @@ const DoctorProfile = () => {
 
   return (
     <div className="flex overflow-hidden flex-col bg-white">
-      <ProfileHeader 
-        doctorName="Dr John Doe"
-        speciality="Plastic Surgeon"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      />
+      {/* Header Section */}
+      <div className="px-20 pt-16 pb-8 w-full bg-orange-100 max-md:px-5 max-md:max-w-full">
+        <div className="flex gap-5 max-md:flex-col">
+          <div className="flex flex-col w-[63%] max-md:ml-0 max-md:w-full">
+            <div className="flex flex-col grow items-start font-medium text-slate-900 max-md:mt-10 max-md:max-w-full">
+              <div className="text-7xl font-bold max-md:max-w-full max-md:text-4xl">
+                {doctor.name}
+              </div>
+              <div className="mt-1 text-4xl">{doctor.specialty}</div>
+              <div className="self-stretch mt-20 text-2xl max-md:mt-10 max-md:max-w-full">
+                Specializes in {doctor.specialty} in {doctor.city}, {doctor.state}.
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col ml-5 w-[37%] max-md:ml-0 max-md:w-full">
+            <div className="flex flex-col mt-9 w-full max-md:mt-10">
+              <div className="self-end text-4xl font-medium text-slate-900 max-md:mr-1">
+                Practicing in {doctor.city}, {doctor.state}
+              </div>
+              <div className="flex gap-10 items-start px-8 pt-4 mt-14 text-white whitespace-nowrap rounded-3xl bg-slate-900 max-md:px-5 max-md:mt-10">
+                <div className="grow shrink text-2xl font-medium w-[90px]">
+                  {getRatingLabel(doctor.rating)}
+                </div>
+                <div className="flex gap-px">
+                  <div className="grow text-9xl max-md:text-4xl">{doctor.rating.toFixed(1)}</div>
+                  <div className="self-end mt-20 text-6xl max-md:mt-10 max-md:text-4xl">
+                    /5
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <div className="flex flex-col px-20 mt-16 w-full max-md:px-5 max-md:mt-10 max-md:max-w-full">
+        {/* Key Insights Section */}
         <div className="self-start text-4xl font-bold text-slate-900">
           Key Insights
         </div>
         <div className="mt-6 max-md:mr-2.5 max-md:max-w-full">
           <div className="flex gap-5 max-md:flex-col">
-            {insights.map((insight, index) => (
-              <KeyInsight
-                key={index}
-                title={insight.title}
-                description={insight.description}
-                imgSrc={insight.imgSrc}
-                imgAlt={insight.imgAlt}
-              />
+            {report?.insights.map((insight, index) => (
+              <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
+                <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
+                  <img
+                    loading="lazy"
+                    src="https://via.placeholder.com/31"
+                    alt={`Insight ${index + 1} icon`}
+                    className="object-contain shrink-0 self-start aspect-square w-[31px]"
+                  />
+                  <div className="flex-auto">Insight {index + 1}</div>
+                </div>
+                <div className="self-center mt-7 text-lg font-medium text-center">
+                  {insight}
+                </div>
+              </div>
             ))}
           </div>
         </div>
+
+        {/* Testimonials Section */}
         <div className="self-start mt-20 text-4xl font-bold text-slate-900 max-md:mt-10">
           Top Testimonials
         </div>
         <div className="mt-10 max-md:mr-1.5 max-md:max-w-full">
           <div className="flex gap-5 max-md:flex-col">
             {testimonials.map((testimonial, index) => (
-              <Testimonial
+              <div
                 key={index}
-                author={testimonial.author}
-                procedure={testimonial.procedure}
-                date={testimonial.date}
-                description={testimonial.description}
-                imgSrc={testimonial.imgSrc}
-                imgAlt={testimonial.imgAlt}
-              />
+                className={`flex flex-col px-8 py-7 mx-auto w-full rounded-2xl shadow-[0px_2px_18px_rgba(0,0,0,0.1)] max-md:px-5 max-md:mt-6 ${
+                  index < 2 ? "bg-blue-100" : "bg-red-100"
+                }`}
+              >
+                <div className="flex gap-5 justify-between w-full font-semibold text-center">
+                  <div className="flex gap-4">
+                    <img
+                      loading="lazy"
+                      src={testimonial.imgSrc}
+                      alt={testimonial.imgAlt}
+                      className="object-contain shrink-0 rounded-full aspect-[0.98] w-[62px]"
+                    />
+                    <div className="flex flex-col self-start">
+                      <div className="text-xl text-black">{testimonial.author}</div>
+                      <div className="self-start mt-1 text-sm text-zinc-400">
+                        {testimonial.date}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="self-end mt-3 text-base font-medium text-slate-900">
+                  {testimonial.comment}
+                </div>
+              </div>
             ))}
           </div>
         </div>
+
+        {/* Summary Section */}
         <div className="self-start mt-20 text-4xl font-bold text-slate-900 max-md:mt-10">
           Summary
         </div>
         <div className="mt-5 text-2xl font-medium text-slate-900 max-md:max-w-full">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu.
+          {report?.summary}
         </div>
       </div>
+
+      {/* Other Doctors Section */}
       <div className="flex flex-col px-20 pt-14 pb-24 mt-20 w-full bg-sky-100 max-md:px-5 max-md:mt-10 max-md:max-w-full">
         <div className="self-start text-4xl font-bold text-slate-900 max-md:max-w-full">
           Get Reports on Other Doctors

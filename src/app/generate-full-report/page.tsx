@@ -1,6 +1,30 @@
-import React from "react";
+'use client'
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const GenerateFullReport = () => {
+  
+const router = useRouter();
+const [slug, setSlug] = useState<string>('');
+
+useEffect(() => {
+  try {
+    const slugParam = new URLSearchParams(window.location.search).get('slug');
+    if (slugParam) {
+      setSlug(slugParam);
+      console.log("Original slug from URL:", slugParam);
+    } else {
+      console.warn("No slug parameter found in URL");
+    }
+  } catch (error) {
+    console.error("Error retrieving slug from URL:", error);
+  }
+}, []);
+  
+  const navigateToReport = (slug: string) => {
+    router.push(`/profile?slug=${encodeURIComponent(slug)}`);
+  };
+
   return (
     <div className="bg-blue-50 min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -114,6 +138,7 @@ const GenerateFullReport = () => {
                 Generate Report
               </button>
               <button
+                onClick={() => navigateToReport(slug)}
                 type="button"
                 className="w-full bg-gray-300 text-gray-900 py-4 rounded-xl font-medium hover:bg-gray-400 transition"
               >
