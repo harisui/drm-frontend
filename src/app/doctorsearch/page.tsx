@@ -38,7 +38,7 @@ const DoctorSearch = () => {
         setDoctors([]);
         setSearchQuery("");
       }
-    }, 500);
+    }, 1500);
 
     return () => clearTimeout(debounceTimer);
   }, [searchText]);
