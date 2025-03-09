@@ -83,28 +83,29 @@ const DoctorProfile = () => {
 
   // Prepare testimonials from API response, handling null report
   const testimonials = report ? [
-    {
-      author: report.positiveComments.first.author? report.positiveComments.first.author : "Anonymous",
-      date: report.positiveComments.first.date,
-      comment: report.positiveComments.first.comment,
+    report.positiveComments?.first ? {
+      author: report.positiveComments.first.author || "Anonymous",
+      date: report.positiveComments.first.date || "Unknown date",
+      comment: report.positiveComments.first.comment || "No comment available",
       imgSrc: "https://via.placeholder.com/62",
       imgAlt: "Anonymous profile"
-    },
-    {
-      author: report.positiveComments.second.author? report.positiveComments.second.author : "Anonymous",
-      date: report.positiveComments.second.date,
-      comment: report.positiveComments.second.comment,
+    } : null,
+    report.positiveComments?.second ? {
+      author: report.positiveComments.second.author || "Anonymous",
+      date: report.positiveComments.second.date || "Unknown date",
+      comment: report.positiveComments.second.comment || "No comment available",
       imgSrc: "https://via.placeholder.com/62",
       imgAlt: "Anonymous profile"
-    },
-    {
-      author: report.negativeComment.author? report.negativeComment.author : "Anonymous",
-      date: report.negativeComment.date,
-      comment: report.negativeComment.comment,
+    } : null,
+    report.negativeComment ? {
+      author: report.negativeComment.author || "Anonymous",
+      date: report.negativeComment.date || "Unknown date",
+      comment: report.negativeComment.comment || "No comment available",
       imgSrc: "https://via.placeholder.com/62",
       imgAlt: "Anonymous profile"
-    }
-  ] : [];
+    } : null
+  ].filter(Boolean) : [];
+  
 
   const otherDoctors = [
     { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/5ce59305fa8206dc231d77f3c42313c9eafba1cec12bc965d6aaf3e1acaa3ad6?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
@@ -120,25 +121,25 @@ const DoctorProfile = () => {
           <div className="flex flex-col w-[63%] max-md:ml-0 max-md:w-full">
             <div className="flex flex-col grow items-start font-medium text-slate-900 max-md:mt-10 max-md:max-w-full">
               <div className="text-7xl font-bold max-md:max-w-full max-md:text-4xl">
-                {doctor.name}
+                {doctor?.name}
               </div>
-              <div className="mt-1 text-4xl">{doctor.specialty}</div>
+              <div className="mt-1 text-4xl">{doctor?.specialty}</div>
               <div className="self-stretch mt-20 text-2xl max-md:mt-10 max-md:max-w-full">
-                Specializes in {doctor.specialty} in {doctor.city}, {doctor.state}.
+                Specializes in {doctor?.specialty} in {doctor?.city}, {doctor?.state}.
               </div>
             </div>
           </div>
           <div className="flex flex-col ml-5 w-[37%] max-md:ml-0 max-md:w-full">
             <div className="flex flex-col mt-9 w-full max-md:mt-10">
               <div className="self-end text-4xl font-medium text-slate-900 max-md:mr-1">
-                Practicing in {doctor.city}, {doctor.state}
+                Practicing in {doctor?.city}, {doctor?.state}
               </div>
               <div className="flex gap-10 items-start px-8 pt-4 mt-14 text-white whitespace-nowrap rounded-3xl bg-slate-900 max-md:px-5 max-md:mt-10">
                 <div className="grow shrink text-2xl font-medium w-[90px]">
-                  {getRatingLabel(doctor.rating)}
+                  {getRatingLabel(doctor?.rating)}
                 </div>
                 <div className="flex gap-px">
-                  <div className="grow text-9xl max-md:text-4xl">{doctor.rating.toFixed(1)}</div>
+                  <div className="grow text-9xl max-md:text-4xl">{doctor?.rating.toFixed(1)}</div>
                   <div className="self-end mt-20 text-6xl max-md:mt-10 max-md:text-4xl">
                     /5
                   </div>
@@ -193,20 +194,20 @@ const DoctorProfile = () => {
                   <div className="flex gap-4">
                     <img
                       loading="lazy"
-                      src={testimonial.imgSrc}
-                      alt={testimonial.imgAlt}
+                      src={testimonial?.imgSrc}
+                      alt={testimonial?.imgAlt}
                       className="object-contain shrink-0 rounded-full aspect-[0.98] w-[62px]"
                     />
                     <div className="flex flex-col self-start">
-                      <div className="text-xl text-black">{testimonial.author}</div>
+                      <div className="text-xl text-black">{testimonial?.author}</div>
                       <div className="self-start mt-1 text-sm text-zinc-400">
-                        {testimonial.date}
+                        {testimonial?.date}
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="self-end mt-3 text-base font-medium text-slate-900">
-                  {testimonial.comment}
+                  {testimonial?.comment}
                 </div>
               </div>
             ))}
@@ -232,14 +233,14 @@ const DoctorProfile = () => {
             {otherDoctors.map((doctor, index) => (
               <OtherDoctorCard
                 key={index}
-                doctorName={doctor.doctorName}
-                speciality={doctor.speciality}
-                practices={doctor.practices}
-                score={doctor.score}
-                years={doctor.years}
-                imgSrc={doctor.imgSrc}
-                imgAlt={doctor.imgAlt}
-                btnText={doctor.btnText}
+                doctorName={doctor?.doctorName}
+                speciality={doctor?.speciality}
+                practices={doctor?.practices}
+                score={doctor?.score}
+                years={doctor?.years}
+                imgSrc={doctor?.imgSrc}
+                imgAlt={doctor?.imgAlt}
+                btnText={doctor?.btnText}
               />
             ))}
           </div>
