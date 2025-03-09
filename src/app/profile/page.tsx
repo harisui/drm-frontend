@@ -1,18 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import OtherDoctorCard from "./OtherDoctorCard";
-import { Doctor } from "@/types";
-
-interface Report {
-  success: boolean;
-  positiveComments: {
-    first: { comment: string; date: string };
-    second: { comment: string; date: string };
-  };
-  negativeComment: { comment: string; date: string };
-  insights: string[];
-  summary: string;
-}
+import { Doctor, Report } from "@/types";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -26,31 +15,54 @@ const DoctorProfile = () => {
 
   useEffect(() => {
     const fetchReport = async () => {
-      const slug = new URLSearchParams(window.location.search).get('slug');
-      if (!slug) {
-        setError('Invalid doctor slug');
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/doctors/ratemds/report/${encodeURIComponent(slug)}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          setReport(data);
-        } else {
-          setError('Failed to generate report');
+      const searchParams = new URLSearchParams(window.location.search);
+      const slugParam = searchParams.get('slug');
+      const idParam = searchParams.get('id');
+  
+      // If we have a slug, use the RateMDs endpoint
+      if (slugParam) {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/doctors/ratemds/report/${encodeURIComponent(slugParam)}`
+          );
+          const data = await response.json();
+          if (data.success) {
+            setReport(data);
+          } else {
+            setError('Failed to generate report from RateMDs');
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+          setIsLoading(false);
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
+      } 
+      // If no slug but we have an id, use the RealSelf endpoint
+      else if (idParam) {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/doctors/realself/report/${encodeURIComponent(idParam)}`
+          );
+          const data = await response.json();
+          if (data.success) {
+            setReport(data);
+          } else {
+            setError('Failed to generate report from RealSelf');
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setError('Invalid doctor identifier');
         setIsLoading(false);
       }
     };
   
     fetchReport();
   }, []);
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -72,21 +84,21 @@ const DoctorProfile = () => {
   // Prepare testimonials from API response, handling null report
   const testimonials = report ? [
     {
-      author: "Anonymous",
+      author: report.positiveComments.first.author? report.positiveComments.first.author : "Anonymous",
       date: report.positiveComments.first.date,
       comment: report.positiveComments.first.comment,
       imgSrc: "https://via.placeholder.com/62",
       imgAlt: "Anonymous profile"
     },
     {
-      author: "Anonymous",
+      author: report.positiveComments.second.author? report.positiveComments.second.author : "Anonymous",
       date: report.positiveComments.second.date,
       comment: report.positiveComments.second.comment,
       imgSrc: "https://via.placeholder.com/62",
       imgAlt: "Anonymous profile"
     },
     {
-      author: "Anonymous",
+      author: report.negativeComment.author? report.negativeComment.author : "Anonymous",
       date: report.negativeComment.date,
       comment: report.negativeComment.comment,
       imgSrc: "https://via.placeholder.com/62",
