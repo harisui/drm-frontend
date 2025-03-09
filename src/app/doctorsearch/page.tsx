@@ -89,10 +89,15 @@ const DoctorSearch = () => {
     }
   }
 
-  const navigateToPayment = (doctor: any, slug: string) => {
+  const navigateToPayment = (doctor: any) => {
     localStorage.setItem('doctor', JSON.stringify(doctor));
     
-    router.push(`/generate-full-report?slug=${encodeURIComponent(slug)}`);
+    // If slug (from RateMDs) otherwise use id (from RealSelf)
+    if (doctor.slug) {
+      router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
+    } else if (doctor.id) {
+      router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
+    }
   };
   
 
@@ -195,7 +200,7 @@ const DoctorSearch = () => {
                         </div>
                       </div>
                       <button 
-                      onClick={() => navigateToPayment(doctor, doctor.slug)}
+                      onClick={() => navigateToPayment(doctor)}
                       className="mt-4 w-full rounded-xl bg-[#14183E] py-3 text-center text-lg font-semibold text-white hover:bg-[#14183E]/90"
                     >
                       Generate Report

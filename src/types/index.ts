@@ -12,3 +12,13 @@ export interface Doctor {
     source: string;
   }
   
+  export interface Report {
+    success: boolean;
+    positiveComments: {
+      first: { author?: string, comment: string; date: string };
+      second: {author?: string, comment: string; date: string };
+    };
+    negativeComment: {author?: string, comment: string; date: string };
+    insights: string[];
+    summary: string;
+  }
