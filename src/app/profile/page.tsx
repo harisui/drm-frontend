@@ -88,26 +88,28 @@ const DoctorProfile = () => {
     return "Poor";
   };
 
+  const stripHtml = (html: any) => html.replace(/<[^>]*>/g, '');
+
   // Prepare testimonials from API response, handling null report
   const testimonials = report ? [
     report.positiveComments?.first ? {
       author: report.positiveComments.first.author || "Anonymous",
       date: report.positiveComments.first.date || "Unknown date",
-      comment: report.positiveComments.first.comment || "No comment available",
+      comment: stripHtml(report.positiveComments.first.comment) || "No comment available",
       imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile"
     } : null,
     report.positiveComments?.second ? {
       author: report.positiveComments.second.author || "Anonymous",
       date: report.positiveComments.second.date || "Unknown date",
-      comment: report.positiveComments.second.comment || "No comment available",
+      comment: stripHtml(report.positiveComments.second.comment) || "No comment available",
       imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile"
     } : null,
     report.negativeComment ? {
       author: report.negativeComment.author || "Anonymous",
       date: report.negativeComment.date || "Unknown date",
-      comment: report.negativeComment.comment || "No comment available",
+      comment: stripHtml(report.negativeComment.comment) || "No comment available",
       imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile"
     } : null
