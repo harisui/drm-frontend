@@ -10,7 +10,7 @@ const DoctorProfile = () => {
   const [error, setError] = useState<string | null>(null);
 
 //  const storedDoctor = localStorage.getItem('doctor');
-  const [storedDoctor, setStoredDoctor] = useState(null);
+  const [storedDoctor, setStoredDoctor] = useState<string | null>(null);
 
   useEffect(() => {
     const doctor = localStorage.getItem("doctor");
@@ -81,14 +81,17 @@ const DoctorProfile = () => {
     return <div>No doctor data found.</div>;
   }
 
-  const getRatingLabel = (rating: number): string => {
+  const getRatingLabel = (rating: number | undefined): string => {
+    if (rating == null) return "N/A";
     if (rating >= 4.5) return "Excellent";
     if (rating >= 3.5) return "Good";
     if (rating >= 2.5) return "Average";
     return "Poor";
   };
 
-  const stripHtml = (html: any) => html.replace(/<[^>]*>/g, '');
+  const stripHtml = (html: string | null | undefined): string => {
+    return html ? html.replace(/<[^>]*>/g, '') : '';
+  };
 
   // Prepare testimonials from API response, handling null report
   const testimonials = report ? [
@@ -167,22 +170,26 @@ const DoctorProfile = () => {
         </div>
         <div className="mt-6 max-md:mr-2.5 max-md:max-w-full">
           <div className="flex gap-5 max-md:flex-col">
-            {report?.insights.map((insight, index) => (
-              <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
-                <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
-                  <img
-                    loading="lazy"
-                    src="https://via.placeholder.com/31"
-                    alt={`Insight ${index + 1} icon`}
-                    className="object-contain shrink-0 self-start aspect-square w-[31px]"
-                  />
-                  <div className="flex-auto">Insight {index + 1}</div>
+            {report && report.insights && report.insights.length > 0 ? (
+              report.insights.map((insight, index) => (
+                <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
+                  <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
+                    <img
+                      loading="lazy"
+                      src="https://via.placeholder.com/31"
+                      alt={`Insight ${index + 1} icon`}
+                      className="object-contain shrink-0 self-start aspect-square w-[31px]"
+                    />
+                    <div className="flex-auto">Insight {index + 1}</div>
+                  </div>
+                  <div className="self-center mt-7 text-lg font-medium text-center">
+                    {insight}
+                  </div>
                 </div>
-                <div className="self-center mt-7 text-lg font-medium text-center">
-                  {insight}
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div>No insights available</div>
+            )}
           </div>
         </div>
 
@@ -228,7 +235,7 @@ const DoctorProfile = () => {
           Summary
         </div>
         <div className="mt-5 text-2xl font-medium text-slate-900 max-md:max-w-full">
-          {report?.summary}
+          {report?.summary || "No summary available."}
         </div>
       </div>
 
