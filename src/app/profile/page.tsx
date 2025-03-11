@@ -36,7 +36,7 @@ const DoctorProfile = () => {
           if (data.success) {
             setReport(data);
           } else {
-            setError('Failed to generate report from RateMDs');
+            setError('Failed to generate report');
           }
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Unknown error');
@@ -54,7 +54,7 @@ const DoctorProfile = () => {
           if (data.success) {
             setReport(data);
           } else {
-            setError('Failed to generate report from RealSelf');
+            setError('Failed to generate report');
           }
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Unknown error');
