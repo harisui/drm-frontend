@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import OtherDoctorCard from "./OtherDoctorCard";
 import { Doctor, Report } from "@/types";
+import Loading from "../loading/page";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -65,7 +66,7 @@ const DoctorProfile = () => {
   
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
   if (error) {
     return <div>Error: {error}</div>;
