@@ -23,7 +23,7 @@ export default function LoadingScreen() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F8FF] p-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#EDF3FF] p-4">
       <div className="w-48 h-48 mb-8 relative animate-spin">
         <Image
           src="/spinner.png"
@@ -34,7 +34,7 @@ export default function LoadingScreen() {
         />
       </div>
 
-      <div className="space-y-4 max-w-[420px] w-full mx-auto">
+      {/* <div className="space-y-4 max-w-[420px] w-full mx-auto">
         {steps.map((step, index) => (
           <div
             key={index}
@@ -64,7 +64,7 @@ export default function LoadingScreen() {
             </span>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -2,21 +2,8 @@
 import { useRouter } from 'next/navigation';
 import * as React from "react";
 import { useState, useEffect } from "react";
-
-interface Doctor {
-  id: string;
-  name: string;
-  specialty: string;
-  rating: number;
-  reviewCount: number;
-  city: string;
-  state: string;
-  imagePath: string | null;
-  slug: string; 
-  // Add these if available in your API response, otherwise keep commented
-  // yearsOfPractice?: number;
-  // surgeonsCount?: number;
-}
+import { Doctor } from '@/types';
+import Image from 'next/image';
 
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -145,7 +132,19 @@ const DoctorSearch = () => {
         {/* Doctor Cards */}
         <div className="mt-auto pb-8">
           <div className="scrollbar-hide overflow-x-auto">
-            {isLoading && <div className="text-center py-4">Loading...</div>}
+            {isLoading && (
+              <div className="flex justify-center items-center w-full">
+                <div className="w-48 h-48 animate-spin">
+                  <Image
+                    src="/spinner.png"
+                    alt="Loading spinner"
+                    width={192}
+                    height={192}
+                    priority
+                  />
+                </div>
+              </div>
+            )}
             {error && <div className="text-center py-4 text-red-500">{error}</div>}           
             <div className="flex gap-4 pb-4">
               {doctors.map((doctor) => (
