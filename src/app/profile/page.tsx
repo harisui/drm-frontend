@@ -88,21 +88,21 @@ const DoctorProfile = () => {
       author: report.positiveComments.first.author || "Anonymous",
       date: report.positiveComments.first.date || "Unknown date",
       comment: report.positiveComments.first.comment || "No comment available",
-      imgSrc: "https://via.placeholder.com/62",
+      imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile"
     } : null,
     report.positiveComments?.second ? {
       author: report.positiveComments.second.author || "Anonymous",
       date: report.positiveComments.second.date || "Unknown date",
       comment: report.positiveComments.second.comment || "No comment available",
-      imgSrc: "https://via.placeholder.com/62",
+      imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile"
     } : null,
     report.negativeComment ? {
       author: report.negativeComment.author || "Anonymous",
       date: report.negativeComment.date || "Unknown date",
       comment: report.negativeComment.comment || "No comment available",
-      imgSrc: "https://via.placeholder.com/62",
+      imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile"
     } : null
   ].filter(Boolean) : [];
