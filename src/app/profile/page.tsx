@@ -9,7 +9,13 @@ const DoctorProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const storedDoctor = localStorage.getItem('doctor');
+//  const storedDoctor = localStorage.getItem('doctor');
+  const [storedDoctor, setStoredDoctor] = useState(null);
+
+  useEffect(() => {
+    const doctor = localStorage.getItem("doctor");
+    setStoredDoctor(doctor);
+  }, []);
   const doctor: Doctor | null = storedDoctor ? JSON.parse(storedDoctor) : null;
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
