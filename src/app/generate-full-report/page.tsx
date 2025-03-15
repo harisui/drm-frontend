@@ -1,12 +1,18 @@
 'use client'
+import { Doctor } from "@/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const GenerateFullReport = () => {
-  
+const [doctor, setDoctor] = useState<Doctor | null>(null);  
 const router = useRouter();
 
 useEffect(() => {
+  const storedDoctor = localStorage.getItem("doctor");
+  if (storedDoctor) {
+    setDoctor(JSON.parse(storedDoctor));
+  }
+
   const searchParams = new URLSearchParams(window.location.search);
   // Check for either slug or id
   const slugParam = searchParams.get('slug');
@@ -40,7 +46,7 @@ const navigateToReport = () => {
         <h1 className="text-6xl font-bold mb-12 text-black">
           Get a full report on
           <br />
-          Dr John Doe
+          {doctor ? doctor.name : 'Dr John Doe'}
         </h1>
 
         <div className="flex flex-col md:flex-row gap-12">
