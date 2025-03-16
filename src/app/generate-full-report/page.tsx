@@ -1,13 +1,52 @@
-import React from "react";
+'use client'
+import { Doctor } from "@/types";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const GenerateFullReport = () => {
+const [doctor, setDoctor] = useState<Doctor | null>(null);  
+const router = useRouter();
+
+useEffect(() => {
+  const storedDoctor = localStorage.getItem("doctor");
+  if (storedDoctor) {
+    setDoctor(JSON.parse(storedDoctor));
+  }
+
+  const searchParams = new URLSearchParams(window.location.search);
+  // Check for either slug or id
+  const slugParam = searchParams.get('slug');
+  const idParam = searchParams.get('id');
+  if (slugParam) {
+    console.log("Identifier (slug) from URL:", slugParam);
+  } else if (idParam) {
+    console.log("Identifier (id) from URL:", idParam);
+  } else {
+    console.warn("No identifier found in URL");
+  }
+}, []);
+  
+const navigateToReport = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const slugParam = searchParams.get('slug');
+  const idParam = searchParams.get('id');
+  if (slugParam || idParam) {
+  
+    const paramName = slugParam ? 'slug' : 'id';
+    const paramValue = slugParam || idParam;
+    router.push(`/profile?${paramName}=${encodeURIComponent(paramValue!)}`);
+  } else {
+    console.warn("No identifier to navigate with");
+  }
+};
+
   return (
     <div className="bg-blue-50 min-h-screen p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-6xl font-bold mb-12 text-black">
           Get a full report on
           <br />
-          Dr John Doe
+          {doctor ? doctor.name : 'Dr John Doe'}
         </h1>
 
         <div className="flex flex-col md:flex-row gap-12">
@@ -32,10 +71,10 @@ const GenerateFullReport = () => {
                       id="cardName"
                       className="w-full border-b-2 border-gray-300 pb-2 focus:outline-none focus:border-blue-500 pr-12"
                     />
-                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="26" viewBox="0 0 37 26" fill="none" class="absolute right-2 top-1/2 transform -translate-y-1/2 h-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="37" height="26" viewBox="0 0 37 26" fill="none" className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8">
                             <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FD0E0E"/>
                             <ellipse cx="25.3283" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FFE249"/>
-                            <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FF4747" fill-opacity="0.65"/>
+                            <ellipse cx="12.3349" cy="13.0656" rx="11.4648" ry="12.9235" fill="#FF4747" fillOpacity="0.65"/>
                     </svg>
                   </div>
                 </div>
@@ -114,6 +153,7 @@ const GenerateFullReport = () => {
                 Generate Report
               </button>
               <button
+                onClick={() => navigateToReport()}
                 type="button"
                 className="w-full bg-gray-300 text-gray-900 py-4 rounded-xl font-medium hover:bg-gray-400 transition"
               >
@@ -125,7 +165,7 @@ const GenerateFullReport = () => {
           {/* Right Side - Report Preview */}
           <div className="bg-white rounded-2xl p-6 shadow-sm flex-1 flex items-center justify-center">
             <img
-              src="https://storage.googleapis.com/a1aa/image/E2o3L1HZUx7Y-fVy6PjOISa9RqElFDtWFWZjSbuD5cY.jpg"
+              src="/report.JPG"
               alt="Placeholder for an image"
               className="w-full h-full object-cover rounded-xl"
             />

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import * as React from "react";
 
 interface TestimonialProps {
@@ -13,7 +14,7 @@ const Testimonial: React.FC<TestimonialProps> = ({ author, procedure, date, desc
   <div className="flex flex-col px-8 py-7 mx-auto w-full bg-white rounded-2xl shadow-[0px_2px_18px_rgba(0,0,0,0.1)] max-md:px-5 max-md:mt-6">
     <div className="flex gap-5 justify-between w-full font-semibold text-center">
       <div className="flex gap-4">
-        <img
+        <Image
           loading="lazy"
           src={imgSrc}
           alt={imgAlt}
