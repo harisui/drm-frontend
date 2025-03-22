@@ -8,9 +8,7 @@ import Image from 'next/image';
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -40,7 +38,7 @@ const DoctorSearch = () => {
     setIsLoading(true);
     setError(null);
     setDoctors([]);
-    
+
     try {
       const rateMDsResponse = await fetch(
         `${API_BASE_URL}/doctors/ratemds-search?query=${encodeURIComponent(query)}`
@@ -78,7 +76,7 @@ const DoctorSearch = () => {
 
   const navigateToPayment = (doctor: any) => {
     localStorage.setItem('doctor', JSON.stringify(doctor));
-    
+
     // If slug (from RateMDs) otherwise use id (from RealSelf)
     if (doctor.slug) {
       router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
@@ -86,34 +84,30 @@ const DoctorSearch = () => {
       router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
     }
   };
-  
+
 
   return (
-    <main className="min-h-screen bg-[#EDF3FF] px-4 py-8 flex flex-col">
-      <div className="mx-auto max-w-6xl flex-1 flex flex-col w-full">
+    <main className="min-h-screen bg-[#EDF3FF] px-4 py-8">
+      <div className="mx-auto max-w-6xl">
         {/* Header Section */}
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="w-full max-w-2xl mx-auto">
-            <div className="text-left">
-              <h1 className="text-5xl font-bold mb-4">
+        <div className="mb-8 lg:mb-12">
+          <div className="max-w-2xl mx-auto">
+            {/* Left-aligned text within search input's width */}
+            <div className="text-left mb-6">
+              <h1 className="text-4xl font-bold mb-2 lg:text-5xl lg:mb-4">
                 Hello <span className="inline-block animate-wave">👋</span>
               </h1>
-              <h2 className="text-6xl font-bold mb-8">Find your doctor</h2>
+              <h2 className="text-5xl font-bold lg:text-6xl">Find your doctor</h2>
             </div>
 
             {/* Search Input */}
             <div className="relative">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
                 className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />
@@ -123,95 +117,81 @@ const DoctorSearch = () => {
                 onChange={(e) => setSearchText(e.target.value)}
                 type="text"
                 placeholder="Search doctor by name or department"
-                className="w-full rounded-full bg-white py-4 pl-12 pr-4 text-lg shadow-lg outline-none ring-1 ring-gray-100"
+                className="w-full rounded-full bg-white py-3 pl-12 pr-4 text-base shadow-lg outline-none ring-1 ring-gray-100 lg:py-4 lg:text-lg"
               />
             </div>
           </div>
         </div>
 
-        {/* Doctor Cards */}
-        <div className="mt-auto pb-8">
-          <div className="scrollbar-hide overflow-x-auto">
-            {isLoading && (
-              <div className="flex justify-center items-center w-full">
-                <div className="w-48 h-48 animate-spin">
-                  <Image
-                    src="/spinner.png"
-                    alt="Loading spinner"
-                    width={192}
-                    height={192}
-                    priority
+        {/* Doctor Cards Grid */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {isLoading && (
+            <div className="col-span-full flex justify-center items-center">
+              <div className="w-32 h-32 animate-spin">
+                <Image
+                  src="/spinner.png"
+                  alt="Loading spinner"
+                  width={128}
+                  height={128}
+                  priority
+                />
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="col-span-full text-center py-4 text-red-500 text-lg">
+              {error}
+            </div>
+          )}
+
+          {doctors.map((doctor) => (
+            <div
+              key={doctor.id}
+              className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02]"
+            >
+              <div className="flex flex-col h-full">
+                <div className="shrink-0 mb-4">
+                  <img
+                    src={doctor.imagePath || "/placeholder.svg"}
+                    alt={doctor.name}
+                    className="w-full h-48 object-contain rounded-xl"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder.png";
+                    }}
                   />
                 </div>
-              </div>
-            )}
-            {error && <div className="text-center py-4 text-red-500">{error}</div>}           
-            <div className="flex gap-4 pb-4">
-              {doctors.map((doctor) => (
-                <div
-                  key={doctor.id}
-                  className="flex-none rounded-3xl bg-[#EDF3FF] p-4 shadow-lg"
-                  style={{ width: "500px", minHeight: "400px" }}
-                >
-                  <div className="flex gap-4 rounded-2xl bg-[#EDF3FF] p-4 h-full">
-                    <div className="shrink-0">
-                      <img
-                        src={doctor.imagePath || "/placeholder.svg"}
-                        alt={doctor.name}
-                        className="h-48 w-48 rounded-xl object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/placeholder.png";
-                        }}
-                      />
-                    </div>
-                    <div className="flex flex-col flex-grow">
-                      <div className="flex-grow">
-                        <h3 className="text-3xl font-bold">{doctor.name}</h3>
-                        <div className="mb-4 flex items-baseline justify-between">
-                          <p className="text-xl">{doctor.specialty}</p>
-                          {/* Uncomment if subSpecialty is available
-                          <p className="text-xl">{doctor.subSpecialty}</p> */}
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="rounded-xl bg-white p-2 flex flex-col justify-between">
-                            <div className="text-sm">Score</div>
-                            <div className="text-3xl self-end font-bold">
-                              {doctor.rating.toFixed(1)}
-                              <span className="text-lg font-bold">/5</span>
-                            </div>
-                          </div>
+                <div className="flex flex-col flex-grow">
+                  <h3 className="text-2xl font-bold mb-2">{doctor.name}</h3>
+                  <p className="text-gray-600 mb-4 text-lg">{doctor.specialty}</p>
 
-                          <div className="rounded-xl bg-white p-2 flex flex-col justify-between">
-                            <div className="text-sm">Reviews</div>
-                            <div className="text-3xl font-bold self-end">
-                              {doctor.reviewCount}
-                            </div>
-                          </div>
-                          
-                          {/* Example placeholder - update with actual data if available */}
-                          <div className="rounded-xl bg-white p-2 flex flex-col justify-between">
-                            <div className="text-sm">Experience</div>
-                            <div className="text-3xl font-bold self-end">
-                              {/* {doctor.yearsOfPractice || 'N/A'} */}
-                              10+
-                            </div>
-                          </div>
-                        </div>
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                      <div className="text-sm text-gray-600">Score</div>
+                      <div className="text-xl font-bold">
+                        {doctor.rating?.toFixed(1)}/5
                       </div>
-                      <button 
-                      onClick={() => navigateToPayment(doctor)}
-                      className="mt-4 w-full rounded-xl bg-[#14183E] py-3 text-center text-lg font-semibold text-white hover:bg-[#14183E]/90"
-                    >
-                      Generate Report
-                    </button>
+                    </div>
+                    <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                      <div className="text-sm text-gray-600">Reviews</div>
+                      <div className="text-xl font-bold">{doctor.reviewCount}</div>
+                    </div>
+                    <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                      <div className="text-sm text-gray-600">Experience</div>
+                      <div className="text-xl font-bold">10+</div>
                     </div>
                   </div>
+
+                  <button
+                    onClick={() => navigateToPayment(doctor)}
+                    className="mt-auto w-full bg-[#14183E] text-white py-2 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
+                  >
+                    Generate Report
+                  </button>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-
-
+          ))}
         </div>
       </div>
     </main>
