@@ -118,7 +118,7 @@ const DoctorProfile = () => {
       imgAlt: "Anonymous profile"
     } : null
   ].filter(Boolean) : [];
-  
+
 
   const otherDoctors = [
     { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/5ce59305fa8206dc231d77f3c42313c9eafba1cec12bc965d6aaf3e1acaa3ad6?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
@@ -199,38 +199,43 @@ const DoctorProfile = () => {
         <div className="self-start mt-20 text-4xl font-bold text-slate-900 max-md:mt-10">
           Top Testimonials
         </div>
-        <div className="mt-10 max-md:mr-1.5 max-md:max-w-full">
-          <div className="flex gap-5 max-md:flex-col">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className={`flex flex-col px-8 py-7 mx-auto w-full rounded-2xl shadow-[0px_2px_18px_rgba(0,0,0,0.1)] max-md:px-5 max-md:mt-6 ${
-                  index < 2 ? "bg-blue-100" : "bg-red-100"
-                }`}
-              >
-                <div className="flex gap-5 justify-between w-full font-semibold text-center">
-                  <div className="flex gap-4">
-                    <img
-                      loading="lazy"
-                      src={testimonial?.imgSrc}
-                      alt={testimonial?.imgAlt}
-                      className="object-contain shrink-0 rounded-full aspect-[0.98] w-[62px]"
-                    />
-                    <div className="flex flex-col self-start">
-                      <div className="text-xl text-black">{testimonial?.author}</div>
-                      <div className="self-start mt-1 text-sm text-zinc-400">
-                        {testimonial?.date}
+        {testimonials.length > 0 ? (
+          <div className="mt-10 max-md:mr-1.5 max-md:max-w-full">
+            <div className="flex gap-5 max-md:flex-col">
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className={`flex flex-col px-8 py-7 mx-auto w-full rounded-2xl shadow-[0px_2px_18px_rgba(0,0,0,0.1)] max-md:px-5 max-md:mt-6 ${
+                    index < 2 ? "bg-blue-100" : "bg-red-100"
+                  }`}
+                >
+                  <div className="flex gap-5 justify-between w-full font-semibold text-center">
+                    <div className="flex gap-4">
+                      <img
+                        loading="lazy"
+                        src={testimonial?.imgSrc}
+                        alt={testimonial?.imgAlt}
+                        className="object-contain shrink-0 rounded-full aspect-[0.98] w-[62px]"
+                      />
+                      <div className="flex flex-col self-start">
+                        <div className="text-xl text-black">{testimonial?.author}</div>
+                        <div className="self-start mt-1 text-sm text-zinc-400">
+                          {testimonial?.date}
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div className="self-end mt-3 text-base font-medium text-slate-900">
+                    {testimonial?.comment}
+                  </div>
                 </div>
-                <div className="self-end mt-3 text-base font-medium text-slate-900">
-                  {testimonial?.comment}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-6 text-xl text-gray-500">No testimonials available</div>
+        )}
+
 
         {/* Summary Section */}
         <div className="self-start mt-20 text-4xl font-bold text-slate-900 max-md:mt-10">
