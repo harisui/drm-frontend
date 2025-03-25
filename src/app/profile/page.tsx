@@ -3,6 +3,17 @@ import { useEffect, useState } from "react";
 import OtherDoctorCard from "./OtherDoctorCard";
 import { Doctor, Report } from "@/types";
 import Loading from "../loading/page";
+import {
+  UserIcon,
+  StarIcon,
+  HeartIcon,
+  ClockIcon,
+  ScaleIcon,
+  BanknotesIcon,
+  FaceSmileIcon,
+  ComputerDesktopIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/solid";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -125,6 +136,37 @@ const DoctorProfile = () => {
     { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/22efb22cd138ca4d8a77c79c9efb3519fe8c20749cb68ea46d8091b835556311?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" }
   ];
 
+  const getInsightIcon = (insight: string) => {
+    const lowerInsight = insight.toLowerCase();
+    const iconClass = "w-8 h-8 text-white p-1.5 rounded-lg";
+
+    if (/experience|years|practice/.test(lowerInsight)) {
+      return <ClockIcon className={`${iconClass} bg-purple-600`} />;
+    }
+    if (/rating|score|reviews/.test(lowerInsight)) {
+      return <StarIcon className={`${iconClass} bg-amber-500`} />;
+    }
+    if (/patient|care|satisfaction/.test(lowerInsight)) {
+      return <UserIcon className={`${iconClass} bg-emerald-600`} />;
+    }
+    if (/technology|equipment|digital/.test(lowerInsight)) {
+      return <ComputerDesktopIcon className={`${iconClass} bg-blue-600`} />;
+    }
+    if (/cost|price|affordable/.test(lowerInsight)) {
+      return <BanknotesIcon className={`${iconClass} bg-green-600`} />;
+    }
+    if (/safety|protocol|standard/.test(lowerInsight)) {
+      return <ScaleIcon className={`${iconClass} bg-red-600`} />;
+    }
+    if (/results|success|improvement/.test(lowerInsight)) {
+      return <FaceSmileIcon className={`${iconClass} bg-pink-500`} />;
+    }
+    if (/care|treatment|procedure/.test(lowerInsight)) {
+      return <HeartIcon className={`${iconClass} bg-rose-600`} />;
+    }
+    return <InformationCircleIcon className={`${iconClass} bg-gray-600`} />;
+  };
+
   return (
     <div className="flex overflow-hidden flex-col bg-white">
       {/* Header Section */}
@@ -174,13 +216,10 @@ const DoctorProfile = () => {
               report.insights.map((insight, index) => (
                 <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
                   <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
-                    <img
-                      loading="lazy"
-                      src="https://via.placeholder.com/31"
-                      alt={`Insight ${index + 1} icon`}
-                      className="object-contain shrink-0 self-start aspect-square w-[31px]"
-                    />
-                    <div className="flex-auto">Insight {index + 1}</div>
+                    <div className="flex items-center justify-center">
+                      {getInsightIcon(insight)}
+                    </div>
+                   
                   </div>
                   <div className="self-center mt-7 text-lg font-medium text-center">
                     {insight}

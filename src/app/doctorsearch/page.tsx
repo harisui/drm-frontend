@@ -64,7 +64,7 @@ const DoctorSearch = () => {
           }));
           setDoctors(formattedRealSelfResults);
         } else {
-          setError("No doctors found in either RateMDs or RealSelf");
+          setError("No doctors found");
         }
       }
     } catch (err) {
