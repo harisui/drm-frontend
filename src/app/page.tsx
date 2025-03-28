@@ -1,4 +1,4 @@
-import DoctorSearch from "./doctorsearch/page";
+import DoctorSearch from "./doctorSearch/page";
 
 export default function Home() {
   return (

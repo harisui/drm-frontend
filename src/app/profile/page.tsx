@@ -15,6 +15,7 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import { LanguageSwitcher } from "@/components/languageSwitcher/language-switcher";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -189,6 +190,7 @@ const DoctorProfile = () => {
 
   return (
     <div className="flex overflow-hidden flex-col bg-white">
+    <LanguageSwitcher />
       {/* Header Section */}
       <div className="px-20 pt-16 pb-8 w-full bg-orange-100 max-md:px-5 max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col">
