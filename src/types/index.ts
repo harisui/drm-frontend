@@ -10,6 +10,7 @@ export interface Doctor {
     profileLink: string;
     slug: string;
     source: string;
+    specialty_url: string;
   }
   
   export interface Report {

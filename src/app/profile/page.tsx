@@ -3,74 +3,105 @@ import { useEffect, useState } from "react";
 import OtherDoctorCard from "./OtherDoctorCard";
 import { Doctor, Report } from "@/types";
 import Loading from "../loading/page";
+import {
+  UserIcon,
+  StarIcon,
+  HeartIcon,
+  ClockIcon,
+  ScaleIcon,
+  BanknotesIcon,
+  FaceSmileIcon,
+  ComputerDesktopIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/solid";
+import Image from "next/image";
 import { LanguageSwitcher } from "@/components/languageSwitcher/language-switcher";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-//  const storedDoctor = localStorage.getItem('doctor');
-  const [storedDoctor, setStoredDoctor] = useState<string | null>(null);
-
-  useEffect(() => {
-    const doctor = localStorage.getItem("doctor");
-    setStoredDoctor(doctor);
-  }, []);
-  const doctor: Doctor | null = storedDoctor ? JSON.parse(storedDoctor) : null;
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [specialtyData, setSpecialtyData] = useState<Doctor[]>([]);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+//  const storedDoctor = localStorage.getItem('doctor');
+
   useEffect(() => {
-    const fetchReport = async () => {
-      const searchParams = new URLSearchParams(window.location.search);
-      const slugParam = searchParams.get('slug');
-      const idParam = searchParams.get('id');
-  
-      // If we have a slug, use the RateMDs endpoint
-      if (slugParam) {
+    if (typeof window !== 'undefined') {
+      const doctorJSON = localStorage.getItem("doctor");
+      if (doctorJSON) {
         try {
-          const response = await fetch(
+          const parsedDoctor = JSON.parse(doctorJSON);
+          setDoctor(parsedDoctor);
+        } catch (error) {
+          console.error("Error parsing doctor from localStorage:", error);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // First API call - Specialty
+        const specialtyResponse = await fetch(
+          `${API_BASE_URL}/doctors/get-ratemd-doctor-specialty?specialty_name=${doctor.specialty_url || 'chiropractor'}`
+        );
+        if (!specialtyResponse.ok) {
+          throw new Error('Specialty fetch failed');
+        }
+        const data = await specialtyResponse.json();
+        setSpecialtyData(data.results);
+        console.log("Specialty data:", data);
+
+        // Get search params on client side
+        const searchParams = typeof window !== 'undefined' 
+          ? new URLSearchParams(window.location.search) 
+          : new URLSearchParams();
+        
+        const slugParam = searchParams.get('slug');
+        const idParam = searchParams.get('id');
+
+        // Second API call - Report
+        let reportResponse: any;
+        let reportData: any;
+
+        if (slugParam) {
+          reportResponse = await fetch(
             `${API_BASE_URL}/doctors/ratemds/report/${encodeURIComponent(slugParam)}`
           );
-          const data = await response.json();
-          if (data.success) {
-            setReport(data);
-          } else {
-            setError('Failed to generate report');
-          }
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Unknown error');
-        } finally {
-          setIsLoading(false);
-        }
-      } 
-      // If no slug but we have an id, use the RealSelf endpoint
-      else if (idParam) {
-        try {
-          const response = await fetch(
+        } else if (idParam && !slugParam) {
+          reportResponse = await fetch(
             `${API_BASE_URL}/doctors/realself/report/${encodeURIComponent(idParam)}`
           );
-          const data = await response.json();
-          if (data.success) {
-            setReport(data);
-          } else {
-            setError('Failed to generate report');
-          }
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Unknown error');
-        } finally {
-          setIsLoading(false);
         }
-      } else {
-        setError('Invalid doctor identifier');
+
+        if (reportResponse) {
+          if (!reportResponse.ok) {
+            throw new Error('Report fetch failed');
+          }
+          reportData = await reportResponse.json();
+          setReport(reportData);
+        }
+
+      } catch (error) {
+        console.error('Error in API chain:', error);
+        setError(error instanceof Error ? error.message : 'API error');
+      } finally {
         setIsLoading(false);
       }
     };
-  
-    fetchReport();
-  }, []);
-  
+
+    if (doctor) {
+      fetchAllData();
+    }
+  }, [doctor, API_BASE_URL]);
 
   if (isLoading) {
     return <Loading />;
@@ -126,6 +157,37 @@ const DoctorProfile = () => {
     { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/22efb22cd138ca4d8a77c79c9efb3519fe8c20749cb68ea46d8091b835556311?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" }
   ];
 
+  const getInsightIcon = (insight: string) => {
+    const lowerInsight = insight.toLowerCase();
+    const iconClass = "w-8 h-8 text-white p-1.5 rounded-lg";
+
+    if (/experience|years|practice/.test(lowerInsight)) {
+      return <ClockIcon className={`${iconClass} bg-purple-600`} />;
+    }
+    if (/rating|score|reviews/.test(lowerInsight)) {
+      return <StarIcon className={`${iconClass} bg-amber-500`} />;
+    }
+    if (/patient|care|satisfaction/.test(lowerInsight)) {
+      return <UserIcon className={`${iconClass} bg-emerald-600`} />;
+    }
+    if (/technology|equipment|digital/.test(lowerInsight)) {
+      return <ComputerDesktopIcon className={`${iconClass} bg-blue-600`} />;
+    }
+    if (/cost|price|affordable/.test(lowerInsight)) {
+      return <BanknotesIcon className={`${iconClass} bg-green-600`} />;
+    }
+    if (/safety|protocol|standard/.test(lowerInsight)) {
+      return <ScaleIcon className={`${iconClass} bg-red-600`} />;
+    }
+    if (/results|success|improvement/.test(lowerInsight)) {
+      return <FaceSmileIcon className={`${iconClass} bg-pink-500`} />;
+    }
+    if (/care|treatment|procedure/.test(lowerInsight)) {
+      return <HeartIcon className={`${iconClass} bg-rose-600`} />;
+    }
+    return <InformationCircleIcon className={`${iconClass} bg-gray-600`} />;
+  };
+
   return (
     <div className="flex overflow-hidden flex-col bg-white">
     <LanguageSwitcher />
@@ -176,13 +238,10 @@ const DoctorProfile = () => {
               report.insights.map((insight, index) => (
                 <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
                   <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
-                    <img
-                      loading="lazy"
-                      src="https://via.placeholder.com/31"
-                      alt={`Insight ${index + 1} icon`}
-                      className="object-contain shrink-0 self-start aspect-square w-[31px]"
-                    />
-                    <div className="flex-auto">Insight {index + 1}</div>
+                    <div className="flex items-center justify-center">
+                      {getInsightIcon(insight)}
+                    </div>
+                   
                   </div>
                   <div className="self-center mt-7 text-lg font-medium text-center">
                     {insight}
@@ -246,25 +305,55 @@ const DoctorProfile = () => {
         </div>
       </div>
 
-      {/* Other Doctors Section */}
-      <div className="flex flex-col px-20 pt-14 pb-24 mt-20 w-full bg-sky-100 max-md:px-5 max-md:mt-10 max-md:max-w-full">
-        <div className="self-start text-4xl font-bold text-slate-900 max-md:max-w-full">
-          Get Reports on Other Doctors
-        </div>
-        <div className="mt-11 w-full max-md:mt-10 max-md:max-w-full">
-          <div className="flex gap-5 max-md:flex-col">
-            {otherDoctors.map((doctor, index) => (
-              <OtherDoctorCard
-                key={index}
-                doctorName={doctor?.doctorName}
-                speciality={doctor?.speciality}
-                practices={doctor?.practices}
-                score={doctor?.score}
-                years={doctor?.years}
-                imgSrc={doctor?.imgSrc}
-                imgAlt={doctor?.imgAlt}
-                btnText={doctor?.btnText}
+{/* Other Doctors Section */}
+<div className="flex flex-col px-20 pt-14 pb-24 mt-20 w-full bg-sky-100 max-md:px-5 max-md:mt-10 max-md:max-w-full">
+  <div className="self-start text-4xl font-bold text-slate-900 max-md:max-w-full">
+    Get Reports on Other Doctors
+  </div>
+  <div className="mt-11 w-full max-md:mt-10 max-md:max-w-full">
+    <div className="flex gap-5 max-md:flex-col">
+      {specialtyData.slice(0, 4).map((doctor: any, index) => (
+        <div
+          key={index}
+          className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02] flex-1"
+        >
+          <div className="flex flex-col h-full">
+            <div className="shrink-0 mb-4">
+              <img
+                src={doctor?.imagePath || "/placeholder.svg"}
+                alt={doctor?.name}
+                className="w-full h-48 object-contain rounded-xl"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/placeholder.png";
+                }}
               />
+            </div>
+            <div className="flex flex-col flex-grow">
+              <h3 className="text-2xl font-bold mb-2">{doctor?.name}</h3>
+              <p className="text-gray-600 mb-4 text-lg">{doctor?.specialty}</p>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                  <div className="text-sm text-gray-600">Score</div>
+                  <div className="text-xl font-bold">
+                    {doctor?.rating?.toFixed(1)}/5
+                  </div>
+                </div>
+                <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                  <div className="text-sm text-gray-600">Reviews</div>
+                  <div className="text-xl font-bold">{doctor?.reviewCount}</div>
+                </div>
+              </div>
+
+              <button
+               
+                className="mt-auto w-full bg-[#14183E] text-white py-2 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
+              >
+                Generate Report
+              </button>
+            </div>
+          </div>
+        </div>
             ))}
           </div>
         </div>
