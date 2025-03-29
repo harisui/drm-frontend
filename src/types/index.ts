@@ -11,6 +11,7 @@ export interface Doctor {
     slug: string;
     source: string;
     specialty_url: string;
+    specialties?: string;
   }
   
   export interface Report {

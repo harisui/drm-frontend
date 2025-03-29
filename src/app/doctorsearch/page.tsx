@@ -4,6 +4,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { Doctor } from '@/types';
 import Image from 'next/image';
+import { v4 as uuidv4 } from 'uuid';
 
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -39,6 +40,7 @@ const DoctorSearch = () => {
     setError(null);
     setDoctors([]);
 
+    // Try RateMDs
     try {
       const rateMDsResponse = await fetch(
         `${API_BASE_URL}/doctors/ratemds-search?query=${encodeURIComponent(query)}`
@@ -51,27 +53,57 @@ const DoctorSearch = () => {
           source: 'RateMDs'
         }));
         setDoctors(formattedRateMDsResults);
-      } else {
-        const realSelfResponse = await fetch(
-          `${API_BASE_URL}/doctors/realself-search?query=${encodeURIComponent(query)}`
-        );
-        const realSelfData = await realSelfResponse.json();
-
-        if (realSelfData.success && realSelfData.results?.length > 0) {
-          const formattedRealSelfResults = realSelfData.results.map((doc: Doctor) => ({
-            ...doc,
-            source: 'RealSelf'
-          }));
-          setDoctors(formattedRealSelfResults);
-        } else {
-          setError("No doctors found");
-        }
+        setIsLoading(false);
+        return;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch doctors");
-    } finally {
-      setIsLoading(false);
+      console.error("RateMDs fetch failed:", err);
     }
+
+    // Try RealSelf
+    try {
+      const realSelfResponse = await fetch(
+        `${API_BASE_URL}/doctors/realself-search?query=${encodeURIComponent(query)}`
+      );
+      const realSelfData = await realSelfResponse.json();
+
+      if (realSelfData.success && realSelfData.results?.length > 0) {
+        const formattedRealSelfResults = realSelfData.results.map((doc: Doctor) => ({
+          ...doc,
+          source: 'RealSelf'
+        }));
+        setDoctors(formattedRealSelfResults);
+        setIsLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.error("RealSelf fetch failed:", err);
+    }
+
+    // Try IWGC if both RateMDs and RealSelf didn't return results
+    try {
+      const iwgcResponse = await fetch(
+        `${API_BASE_URL}/doctors/iwgc-search?query=${encodeURIComponent(query)}`
+      );
+      const iwgcData = await iwgcResponse.json();
+
+      if (iwgcData.success && iwgcData.results?.length > 0) {
+        const formattedIwgcResults = iwgcData.results.map((doc: Doctor) => ({
+          ...doc,
+          source: 'I Want Great Care'
+        }));
+        setDoctors(formattedIwgcResults);
+        setIsLoading(false);
+        return; // Exit if successful
+      }
+    } catch (err) {
+      console.error("IWGC fetch failed:", err);
+      // No more APIs to try
+    }
+
+    // If all APIs fail or return no results
+    setError("No doctors found");
+    setIsLoading(false);
   }
 
   const navigateToPayment = (doctor: any) => {
@@ -147,7 +179,7 @@ const DoctorSearch = () => {
 
           {doctors.map((doctor) => (
             <div
-              key={doctor.id}
+              key={doctor.id || uuidv4()}
               className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02]"
             >
               <div className="flex flex-col h-full">
@@ -163,7 +195,11 @@ const DoctorSearch = () => {
                 </div>
                 <div className="flex flex-col flex-grow">
                   <h3 className="text-2xl font-bold mb-2">{doctor.name}</h3>
-                  <p className="text-gray-600 mb-4 text-lg">{doctor.specialty}</p>
+                  <p className="text-gray-600 mb-4 text-lg">
+                    {Array.isArray(doctor.specialties)
+                      ? doctor.specialties.join(', ')
+                      : doctor.specialty || 'N/A'}
+                  </p>
 
                   <div className="grid grid-cols-3 gap-3 mb-4">
                     <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
@@ -199,3 +235,4 @@ const DoctorSearch = () => {
 };
 
 export default DoctorSearch;
+9
