@@ -254,21 +254,28 @@ const DoctorProfile = () => {
         <div className="mt-6 max-md:mr-2.5 max-md:max-w-full">
           <div className="flex gap-5 max-md:flex-col">
             {report && report.insights && report.insights.length > 0 ? (
-              report.insights.map((insight, index) => (
-                <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
-                  <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
-                    <div className="flex items-center justify-center">
-                      {getInsightIcon(insight)}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+                {report.insights.map((insight, index) => (
+                  <div key={index} className="flex flex-col text-slate-900 h-full">
+                    <div className="flex gap-4 items-start p-5 bg-white rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-orange-100 h-full">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {getInsightIcon(insight)}
+                      </div>
+                      <p className="text-lg font-medium">
+                        {insight}
+                      </p>
                     </div>
-                   
                   </div>
-                  <div className="self-center mt-7 text-lg font-medium text-center">
-                    {insight}
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
-              <div>No insights available</div>
+              <div className="flex flex-col w-full text-slate-900">
+                <div className="flex gap-4 items-center p-5 bg-white rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] border border-gray-200">
+                  <p className="text-lg font-medium">
+                    No insights available
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
