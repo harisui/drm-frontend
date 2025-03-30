@@ -11,7 +11,7 @@ export interface Doctor {
     slug: string;
     source: string;
     specialty_url: string;
-    specialties?: string;
+    specialties?: string[];
   }
   
   export interface Report {
@@ -23,4 +23,5 @@ export interface Doctor {
     negativeComment: {author?: string, comment: string; date: string };
     insights: string[];
     summary: string;
+    locations?: string[];
   }

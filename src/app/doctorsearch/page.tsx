@@ -106,14 +106,25 @@ const DoctorSearch = () => {
     setIsLoading(false);
   }
 
+  const getSlugFromProfileLink = (profileLink: string): string | null => {
+    const match = profileLink.match(/\/doctors\/([^/]+)/);
+    return match ? match[1] : null;
+  };
+  
+
   const navigateToPayment = (doctor: any) => {
     localStorage.setItem('doctor', JSON.stringify(doctor));
 
-    // If slug (from RateMDs) otherwise use id (from RealSelf)
+    // If slug (from RateMDs) otherwise use id (from RealSelf), profileLink for IWGC
     if (doctor.slug) {
       router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
     } else if (doctor.id) {
       router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
+    } else if (doctor.profileLink) {
+      const slug = getSlugFromProfileLink(doctor.profileLink);
+      if (slug) {
+        router.push(`/generate-full-report?iwgc_slug=${encodeURIComponent(slug)}`);
+      }
     }
   };
 
