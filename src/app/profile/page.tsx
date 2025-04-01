@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { LanguageSwitcher } from "@/components/languageSwitcher/language-switcher";
+import { useRouter } from "next/navigation";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -22,6 +23,7 @@ const DoctorProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [specialtyData, setSpecialtyData] = useState<Doctor[]>([]);
+    const router = useRouter();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -191,6 +193,17 @@ const DoctorProfile = () => {
       return <HeartIcon className={`${iconClass} bg-rose-600`} />;
     }
     return <InformationCircleIcon className={`${iconClass} bg-gray-600`} />;
+  };
+
+  const navigateToPayment = (doctor: any) => {
+    localStorage.setItem('doctor', JSON.stringify(doctor));
+
+    // If slug (from RateMDs) otherwise use id (from RealSelf)
+    if (doctor.slug) {
+      router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
+    } else if (doctor.id) {
+      router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
+    }
   };
 
   return (
@@ -371,7 +384,7 @@ const DoctorProfile = () => {
               </div>
 
               <button
-               
+                onClick={() => navigateToPayment(doctor)}
                 className="mt-auto w-full bg-[#14183E] text-white py-2 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
               >
                 Generate Report
