@@ -17,10 +17,13 @@ useEffect(() => {
   // Check for either slug or id
   const slugParam = searchParams.get('slug');
   const idParam = searchParams.get('id');
+  const iwgc_slug = searchParams.get('iwgc_slug');
   if (slugParam) {
     console.log("Identifier (slug) from URL:", slugParam);
   } else if (idParam) {
     console.log("Identifier (id) from URL:", idParam);
+  } else if (iwgc_slug) {
+    console.log("Identified (iwgc) from URL:", iwgc_slug);
   } else {
     console.warn("No identifier found in URL");
   }
@@ -30,10 +33,23 @@ const navigateToReport = () => {
   const searchParams = new URLSearchParams(window.location.search);
   const slugParam = searchParams.get('slug');
   const idParam = searchParams.get('id');
-  if (slugParam || idParam) {
-  
-    const paramName = slugParam ? 'slug' : 'id';
-    const paramValue = slugParam || idParam;
+  const iwgcSlugParam = searchParams.get('iwgc_slug');
+
+  let paramName = '';
+  let paramValue = '';
+
+  if (slugParam) {
+    paramName = 'slug';
+    paramValue = slugParam;
+  } else if (idParam) {
+    paramName = 'id';
+    paramValue = idParam;
+  } else if (iwgcSlugParam) {
+    paramName = 'iwgc_slug';
+    paramValue = iwgcSlugParam;
+  }
+
+  if (paramName && paramValue) {
     router.push(`/profile?${paramName}=${encodeURIComponent(paramValue!)}`);
   } else {
     console.warn("No identifier to navigate with");

@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from "react";
-import OtherDoctorCard from "./OtherDoctorCard";
 import { Doctor, Report } from "@/types";
 import Loading from "../loading/page";
 import {
@@ -16,6 +15,7 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { LanguageSwitcher } from "@/components/languageSwitcher/language-switcher";
+import { useRouter } from "next/navigation";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -23,10 +23,9 @@ const DoctorProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [specialtyData, setSpecialtyData] = useState<Doctor[]>([]);
+    const router = useRouter();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-//  const storedDoctor = localStorage.getItem('doctor');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -67,6 +66,7 @@ const DoctorProfile = () => {
         
         const slugParam = searchParams.get('slug');
         const idParam = searchParams.get('id');
+        const iwgcSlugParam = searchParams.get('iwgc_slug');
 
         // Second API call - Report
         let reportResponse: any;
@@ -80,6 +80,10 @@ const DoctorProfile = () => {
           reportResponse = await fetch(
             `${API_BASE_URL}/doctors/realself/report/${encodeURIComponent(idParam)}`
           );
+        } else if (iwgcSlugParam) {
+          reportResponse = await fetch(
+            `${API_BASE_URL}/doctors/iwgc/report/${encodeURIComponent(iwgcSlugParam)}`
+          )
         }
 
         if (reportResponse) {
@@ -132,30 +136,33 @@ const DoctorProfile = () => {
       date: report.positiveComments.first.date || "Unknown date",
       comment: stripHtml(report.positiveComments.first.comment) || "No comment available",
       imgSrc: "/avatar.png",
-      imgAlt: "Anonymous profile"
+      imgAlt: "Anonymous profile",
+      type: "positive"
     } : null,
     report.positiveComments?.second ? {
       author: report.positiveComments.second.author || "Anonymous",
       date: report.positiveComments.second.date || "Unknown date",
       comment: stripHtml(report.positiveComments.second.comment) || "No comment available",
       imgSrc: "/avatar.png",
-      imgAlt: "Anonymous profile"
+      imgAlt: "Anonymous profile",
+      type: "positive"
     } : null,
     report.negativeComment ? {
       author: report.negativeComment.author || "Anonymous",
       date: report.negativeComment.date || "Unknown date",
       comment: stripHtml(report.negativeComment.comment) || "No comment available",
       imgSrc: "/avatar.png",
-      imgAlt: "Anonymous profile"
+      imgAlt: "Anonymous profile",
+      type: "negative"
     } : null
   ].filter(Boolean) : [];
 
 
-  const otherDoctors = [
-    { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/5ce59305fa8206dc231d77f3c42313c9eafba1cec12bc965d6aaf3e1acaa3ad6?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
-    { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/f72ca2a141f983162a45111238163124a9c4fd774868ce5cfba7c2510910592f?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
-    { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/22efb22cd138ca4d8a77c79c9efb3519fe8c20749cb68ea46d8091b835556311?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" }
-  ];
+  // const otherDoctors = [
+  //   { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/5ce59305fa8206dc231d77f3c42313c9eafba1cec12bc965d6aaf3e1acaa3ad6?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
+  //   { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/f72ca2a141f983162a45111238163124a9c4fd774868ce5cfba7c2510910592f?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" },
+  //   { doctorName: "Dr. Bryson", speciality: "Plastic Surgeon", practices: 240, score: 9, years: 17, imgSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/22efb22cd138ca4d8a77c79c9efb3519fe8c20749cb68ea46d8091b835556311?placeholderIfAbsent=true&apiKey=94fb06f7e4d44f66bb1cedf1d92b4f27", imgAlt: "Dr. Bryson profile", btnText: "Generate Report" }
+  // ];
 
   const getInsightIcon = (insight: string) => {
     const lowerInsight = insight.toLowerCase();
@@ -188,6 +195,17 @@ const DoctorProfile = () => {
     return <InformationCircleIcon className={`${iconClass} bg-gray-600`} />;
   };
 
+  const navigateToPayment = (doctor: any) => {
+    localStorage.setItem('doctor', JSON.stringify(doctor));
+
+    // If slug (from RateMDs) otherwise use id (from RealSelf)
+    if (doctor.slug) {
+      router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
+    } else if (doctor.id) {
+      router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
+    }
+  };
+
   return (
     <div className="flex overflow-hidden flex-col bg-white">
     <LanguageSwitcher />
@@ -201,14 +219,28 @@ const DoctorProfile = () => {
               </div>
               <div className="mt-1 text-4xl">{doctor?.specialty}</div>
               <div className="self-stretch mt-20 text-2xl max-md:mt-10 max-md:max-w-full">
-                Specializes in {doctor?.specialty} in {doctor?.city}, {doctor?.state}.
+                {doctor?.specialties
+                  ? `Specializes in ${doctor.specialties.map((spec: any, i: any) => (
+                    `${spec}${i < doctor.specialties.length - 1 ? ', ' : ''}`
+                  )).join('')}.`
+                  : `Specializes in ${doctor?.specialty} in ${doctor?.city}, ${doctor?.state}.`}
               </div>
             </div>
           </div>
           <div className="flex flex-col ml-5 w-[37%] max-md:ml-0 max-md:w-full">
             <div className="flex flex-col mt-9 w-full max-md:mt-10">
               <div className="self-end text-4xl font-medium text-slate-900 max-md:mr-1">
-                Practicing in {doctor?.city}, {doctor?.state}
+                Practicing in{" "}
+                {Array.isArray(report?.locations) && report.locations.length > 0 ? (
+                  report.locations.slice(0,2).map((loc, i) => (
+                    <span key={i}>
+                      {loc}
+                      {i < report.locations.length - 1 ? ", " : ""}
+                    </span>
+                  ))
+                ) : (
+                  `${doctor?.city}, ${doctor?.state}`
+                )}
               </div>
               <div className="flex gap-10 items-start px-8 pt-4 mt-14 text-white whitespace-nowrap rounded-3xl bg-slate-900 max-md:px-5 max-md:mt-10">
                 <div className="grow shrink text-2xl font-medium w-[90px]">
@@ -235,21 +267,28 @@ const DoctorProfile = () => {
         <div className="mt-6 max-md:mr-2.5 max-md:max-w-full">
           <div className="flex gap-5 max-md:flex-col">
             {report && report.insights && report.insights.length > 0 ? (
-              report.insights.map((insight, index) => (
-                <div key={index} className="flex flex-col w-full text-slate-900 max-md:mt-10">
-                  <div className="flex gap-5 px-5 py-3 text-3xl font-semibold whitespace-nowrap bg-orange-100 rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] max-md:px-5">
-                    <div className="flex items-center justify-center">
-                      {getInsightIcon(insight)}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+                {report.insights.map((insight, index) => (
+                  <div key={index} className="flex flex-col text-slate-900 h-full">
+                    <div className="flex gap-4 items-start p-5 bg-white rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-orange-100 h-full">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {getInsightIcon(insight)}
+                      </div>
+                      <p className="text-lg font-medium">
+                        {insight}
+                      </p>
                     </div>
-                   
                   </div>
-                  <div className="self-center mt-7 text-lg font-medium text-center">
-                    {insight}
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
-              <div>No insights available</div>
+              <div className="flex flex-col w-full text-slate-900">
+                <div className="flex gap-4 items-center p-5 bg-white rounded-xl shadow-[0px_4px_17px_rgba(0,0,0,0.08)] border border-gray-200">
+                  <p className="text-lg font-medium">
+                    No insights available
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -264,8 +303,7 @@ const DoctorProfile = () => {
               {testimonials.map((testimonial, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col px-8 py-7 mx-auto w-full rounded-2xl shadow-[0px_2px_18px_rgba(0,0,0,0.1)] max-md:px-5 max-md:mt-6 ${
-                    index < 2 ? "bg-blue-100" : "bg-red-100"
+                  className={`flex flex-col px-8 py-7 mx-auto w-full rounded-2xl shadow-[0px_2px_18px_rgba(0,0,0,0.1)] max-md:px-5 max-md:mt-6 ${ testimonial.type === "positive" ? "bg-blue-100" : "bg-red-100"
                   }`}
                 >
                   <div className="flex gap-5 justify-between w-full font-semibold text-center">
@@ -346,7 +384,7 @@ const DoctorProfile = () => {
               </div>
 
               <button
-               
+                onClick={() => navigateToPayment(doctor)}
                 className="mt-auto w-full bg-[#14183E] text-white py-2 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
               >
                 Generate Report
