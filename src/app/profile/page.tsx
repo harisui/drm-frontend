@@ -57,7 +57,6 @@ const DoctorProfile = () => {
         }
         const data = await specialtyResponse.json();
         setSpecialtyData(data.results);
-        console.log("Specialty data:", data);
 
         // Get search params on client side
         const searchParams = typeof window !== 'undefined' 
