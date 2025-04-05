@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { parseCookies, setCookie } from 'nookies';
+import { setCookie } from 'nookies';
 
 const COOKIE_NAME = 'googtrans';
 
@@ -24,22 +24,20 @@ const LanguageSwitcher = () => {
     const [languageConfig, setLanguageConfig] = useState<any>();
 
     useEffect(() => {
-        const cookies = parseCookies();
-        const existingLanguageCookieValue = cookies[COOKIE_NAME];
+        const searchParams = new URLSearchParams(window.location.search);
+        const defaultLanguage = global.__GOOGLE_TRANSLATION_CONFIG__?.defaultLanguage || 'en';
+        let lang = searchParams.get('lang') || defaultLanguage;
 
-        let languageValue;
-        if (existingLanguageCookieValue) {
-            const sp = existingLanguageCookieValue.split('/');
-            if (sp.length > 2) {
-                languageValue = sp[2];
-            }
+        setCurrentLanguage(lang);
+
+        if (!searchParams.has('lang')) {
+            searchParams.set('lang', defaultLanguage);
+            setCookie(null, COOKIE_NAME, '/auto/' + defaultLanguage, { path: '/' });
+            window.location.search = searchParams.toString();
+        } else {
+            setCookie(null, COOKIE_NAME, '/auto/' + lang, { path: '/' });
         }
-        if (global.__GOOGLE_TRANSLATION_CONFIG__ && !languageValue) {
-            languageValue = global.__GOOGLE_TRANSLATION_CONFIG__.defaultLanguage;
-        }
-        if (languageValue) {
-            setCurrentLanguage(languageValue);
-        }
+
         if (global.__GOOGLE_TRANSLATION_CONFIG__) {
             setLanguageConfig(global.__GOOGLE_TRANSLATION_CONFIG__);
         }
@@ -49,17 +47,18 @@ const LanguageSwitcher = () => {
         return null;
     }
 
-    const switchLanguage = (lang: string) => () => {
-        setCookie(null, COOKIE_NAME, '/auto/' + lang, { path: '/' });
-        window.location.reload();
+    const switchLanguage = (newLang: string) => () => {
+        const currentSearch = new URLSearchParams(window.location.search);
+        currentSearch.set('lang', newLang);
+        setCookie(null, COOKIE_NAME, '/auto/' + newLang, { path: '/' });
+        window.location.search = currentSearch.toString();
     };
 
     return (
         <div className="text-center notranslate bg-black">
             {languageConfig.languages.map((ld: LanguageDescriptor) => (
                 <React.Fragment key={ld.name}>
-                    {currentLanguage === ld.name ||
-                    (currentLanguage === 'auto' && languageConfig.defaultLanguage === ld.name) ? (
+                    {currentLanguage === ld.name ? (
                         <span className="mx-3 text-orange-300">{ld.title}</span>
                     ) : (
                         <a
