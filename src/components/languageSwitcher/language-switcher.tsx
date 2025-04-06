@@ -1,77 +1,44 @@
 'use client';
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { setCookie } from 'nookies';
-
-const COOKIE_NAME = 'googtrans';
-
-interface LanguageDescriptor {
-    name: string;
-    title: string;
-}
-
-declare global {
-    namespace globalThis {
-        var __GOOGLE_TRANSLATION_CONFIG__: {
-            languages: LanguageDescriptor[];
-            defaultLanguage: string;
-        };
-    }
-}
+import React, { useEffect, useState } from 'react';
+import "./googleLangStyle.css";
 
 const LanguageSwitcher = () => {
-    const [currentLanguage, setCurrentLanguage] = useState<string>();
-    const [languageConfig, setLanguageConfig] = useState<any>();
+    const [currentLanguage, setCurrentLanguage] = useState<string>("en");
 
     useEffect(() => {
+        // Initialize the current language from the "lang" query parameter or default to "en"
         const searchParams = new URLSearchParams(window.location.search);
-        const defaultLanguage = global.__GOOGLE_TRANSLATION_CONFIG__?.defaultLanguage || 'en';
-        let lang = searchParams.get('lang') || defaultLanguage;
+        const langFromQuery = searchParams.get("lang") || "en";
+        setCurrentLanguage(langFromQuery);
 
-        setCurrentLanguage(lang);
+        // Check if Google Translate script is already loaded to avoid duplicates
+        if (!document.querySelector('script[src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"]')) {
+            // Define the global function for Google Translate initialization
+            window.googleTranslateElementInit = () => {
+                new google.translate.TranslateElement(
+                    {
+                        pageLanguage: "en", // Set the default page language
+                        includedLanguages: "", // Leave blank to include all languages
+                        layout: google.translate.TranslateElement.InlineLayout.SIMPLE, // Use a simple dropdown
+                        autoDisplay: false, // Prevent automatic display of the default widget
+                    },
+                    "google_translate_element"
+                );
+            };
 
-        if (!searchParams.has('lang')) {
-            searchParams.set('lang', defaultLanguage);
-            setCookie(null, COOKIE_NAME, '/auto/' + defaultLanguage, { path: '/' });
-            window.location.search = searchParams.toString();
-        } else {
-            setCookie(null, COOKIE_NAME, '/auto/' + lang, { path: '/' });
+            // Inject the Google Translate script
+            const translateScript = document.createElement("script");
+            translateScript.type = "text/javascript";
+            translateScript.async = true;
+            translateScript.src =
+                "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+            document.body.appendChild(translateScript);
         }
-
-        if (global.__GOOGLE_TRANSLATION_CONFIG__) {
-            setLanguageConfig(global.__GOOGLE_TRANSLATION_CONFIG__);
-        }
-    }, []);
-
-    if (!currentLanguage || !languageConfig) {
-        return null;
-    }
-
-    const switchLanguage = (newLang: string) => () => {
-        const currentSearch = new URLSearchParams(window.location.search);
-        currentSearch.set('lang', newLang);
-        setCookie(null, COOKIE_NAME, '/auto/' + newLang, { path: '/' });
-        window.location.search = currentSearch.toString();
-    };
+    }, []); // Run only once on component mount
 
     return (
-        <div className="text-center notranslate bg-black">
-            {languageConfig.languages.map((ld: LanguageDescriptor) => (
-                <React.Fragment key={ld.name}>
-                    {currentLanguage === ld.name ? (
-                        <span className="mx-3 text-orange-300">{ld.title}</span>
-                    ) : (
-                        <a
-                            onClick={switchLanguage(ld.name)}
-                            className="mx-3 text-blue-300 cursor-pointer hover:underline"
-                        >
-                            {ld.title}
-                        </a>
-                    )}
-                </React.Fragment>
-            ))}
-        </div>
+        <div id="google_translate_element" className="text-center"></div>
     );
 };
 
-export { LanguageSwitcher, COOKIE_NAME };
+export { LanguageSwitcher };

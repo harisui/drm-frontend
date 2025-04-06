@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Doctor } from '@/types';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
+import {paymentPageUrlRenderer} from "@/services/helper";
 
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -13,6 +14,7 @@ const DoctorSearch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const [apiSources, setApiSources] = useState<string>("")
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -43,16 +45,18 @@ const DoctorSearch = () => {
     // Try RateMDs
     try {
       const rateMDsResponse = await fetch(
-        `${API_BASE_URL}/doctors/ratemds-search?query=${encodeURIComponent(query)}`
+        `${API_BASE_URL}/doctors/search?query=${encodeURIComponent(query)}`
       );
-      const rateMDsData = await rateMDsResponse.json();
+      const doctorsFetched = await rateMDsResponse.json();
 
-      if (rateMDsData.success && rateMDsData.results?.length > 0) {
-        const formattedRateMDsResults = rateMDsData.results.map((doc: Doctor) => ({
-          ...doc,
-          source: 'RateMDs'
-        }));
-        setDoctors(formattedRateMDsResults);
+      if (doctorsFetched.success && doctorsFetched.results?.length > 0) {
+        // const formattedRateMDsResults = doctorsFetched.results.map((doc: Doctor) => ({
+        //   ...doc,
+        //   // source: 'RateMDs'
+        // }));
+        console.log('formattedRateMDsResults', doctorsFetched);
+        setDoctors(doctorsFetched.results);
+        setApiSources(doctorsFetched.source);
         setIsLoading(false);
         return;
       }
@@ -61,71 +65,57 @@ const DoctorSearch = () => {
     }
 
     // Try RealSelf
-    try {
-      const realSelfResponse = await fetch(
-        `${API_BASE_URL}/doctors/realself-search?query=${encodeURIComponent(query)}`
-      );
-      const realSelfData = await realSelfResponse.json();
-
-      if (realSelfData.success && realSelfData.results?.length > 0) {
-        const formattedRealSelfResults = realSelfData.results.map((doc: Doctor) => ({
-          ...doc,
-          source: 'RealSelf'
-        }));
-        setDoctors(formattedRealSelfResults);
-        setIsLoading(false);
-        return;
-      }
-    } catch (err) {
-      console.error("RealSelf fetch failed:", err);
-    }
-
-    // Try IWGC if both RateMDs and RealSelf didn't return results
-    try {
-      const iwgcResponse = await fetch(
-        `${API_BASE_URL}/doctors/iwgc-search?query=${encodeURIComponent(query)}`
-      );
-      const iwgcData = await iwgcResponse.json();
-
-      if (iwgcData.success && iwgcData.results?.length > 0) {
-        const formattedIwgcResults = iwgcData.results.map((doc: Doctor) => ({
-          ...doc,
-          source: 'I Want Great Care'
-        }));
-        setDoctors(formattedIwgcResults);
-        setIsLoading(false);
-        return; // Exit if successful
-      }
-    } catch (err) {
-      console.error("IWGC fetch failed:", err);
-      // No more APIs to try
-    }
+    // try {
+    //   const realSelfResponse = await fetch(
+    //     `${API_BASE_URL}/doctors/realself-search?query=${encodeURIComponent(query)}`
+    //   );
+    //   const realSelfData = await realSelfResponse.json();
+    //
+    //   if (realSelfData.success && realSelfData.results?.length > 0) {
+    //     const formattedRealSelfResults = realSelfData.results.map((doc: Doctor) => ({
+    //       ...doc,
+    //       source: 'RealSelf'
+    //     }));
+    //     setDoctors(formattedRealSelfResults);
+    //     setIsLoading(false);
+    //     return;
+    //   }
+    // } catch (err) {
+    //   console.error("RealSelf fetch failed:", err);
+    // }
+    //
+    // // Try IWGC if both RateMDs and RealSelf didn't return results
+    // try {
+    //   const iwgcResponse = await fetch(
+    //     `${API_BASE_URL}/doctors/iwgc-search?query=${encodeURIComponent(query)}`
+    //   );
+    //   const iwgcData = await iwgcResponse.json();
+    //
+    //   if (iwgcData.success && iwgcData.results?.length > 0) {
+    //     const formattedIwgcResults = iwgcData.results.map((doc: Doctor) => ({
+    //       ...doc,
+    //       source: 'I Want Great Care'
+    //     }));
+    //     setDoctors(formattedIwgcResults);
+    //     setIsLoading(false);
+    //     return; // Exit if successful
+    //   }
+    // } catch (err) {
+    //   console.error("IWGC fetch failed:", err);
+    //   // No more APIs to try
+    // }
 
     // If all APIs fail or return no results
     setError("No doctors found");
     setIsLoading(false);
   }
 
-  const getSlugFromProfileLink = (profileLink: string): string | null => {
-    const match = profileLink.match(/\/doctors\/([^/]+)/);
-    return match ? match[1] : null;
-  };
-  
+
 
   const navigateToPayment = (doctor: any) => {
-    localStorage.setItem('doctor', JSON.stringify(doctor));
 
-    // If slug (from RateMDs) otherwise use id (from RealSelf), profileLink for IWGC
-    if (doctor.slug) {
-      router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
-    } else if (doctor.id) {
-      router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
-    } else if (doctor.profileLink) {
-      const slug = getSlugFromProfileLink(doctor.profileLink);
-      if (slug) {
-        router.push(`/generate-full-report?iwgc_slug=${encodeURIComponent(slug)}`);
-      }
-    }
+    paymentPageUrlRenderer(doctor,apiSources, router);
+
   };
 
 

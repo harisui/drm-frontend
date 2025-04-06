@@ -15,75 +15,117 @@ import {
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { LanguageSwitcher } from "@/components/languageSwitcher/language-switcher";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
+import {paymentPageUrlRenderer} from "@/services/helper";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  // const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [specialtyData, setSpecialtyData] = useState<Doctor[]>([]);
-    const router = useRouter();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [params, setParams] = useState<{
+    _spt: string;
+    _spt_slug: string;
+    _nme: string;
+    _ct: string;
+    _st: string;
+    _rt: number;
+    slug: string;
+    _sr: string;
+    lang: string;
+  }>({
+    _spt: "chiropractor",
+    _spt_slug: "chiropractor",
+    _nme: "Dr.",
+    _ct: "",
+    _st: "",
+    _rt: 0,
+    slug: "",
+    _sr: "",
+    lang: "en"
+  });
+
+  useEffect(() => {
+    const specialty = searchParams.get("_spt") || "chiropractor";
+    const specialtySlug = searchParams.get("_spt_slug") || searchParams.get("_spt") || "chiropractor";
+    const name = searchParams.get("_nme") || "Dr.";
+    const city = searchParams.get("_ct") || "";
+    const state = searchParams.get("_st") || "";
+    const rating = parseFloat(searchParams.get("_rt") || "0");
+    const slug = decodeURIComponent(searchParams.get("slug") || "");
+    const source = searchParams.get("_sr") || "";
+    const lang = searchParams.get("lang") || "en";
+
+    setParams({
+      _spt: specialty,
+      _spt_slug: specialtySlug,
+      _nme: name,
+      _ct: city,
+      _st: state,
+      _rt: rating,
+      slug : slug,
+      _sr: source,
+      lang : lang
+    });
+  }, [searchParams]);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const doctorJSON = localStorage.getItem("doctor");
-      if (doctorJSON) {
-        try {
-          const parsedDoctor = JSON.parse(doctorJSON);
-          setDoctor(parsedDoctor);
-        } catch (error) {
-          console.error("Error parsing doctor from localStorage:", error);
-        }
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const doctorJSON = localStorage.getItem("doctor");
+  //     if (doctorJSON) {
+  //       try {
+  //         const parsedDoctor = JSON.parse(doctorJSON);
+  //         setDoctor(parsedDoctor);
+  //       } catch (error) {
+  //         console.error("Error parsing doctor from localStorage:", error);
+  //       }
+  //     }
+  //   }
+  // }, []);
+
+  const fetchSpecialtyData = async (specialty: string) => {
+    const response = await fetch(
+      `${API_BASE_URL}/doctors/speciality/?source=${params?._sr}&speciality=${specialty}`
+    );
+    // if (!response.ok) {
+    //   // throw new Error('Specialty fetch failed');
+    //   setSpecialtyData([]);
+    //   return [];
+    // }
+    const data = await response.json();
+    setSpecialtyData(data?.results || []);
+    return data?.results || [];
+  }
 
   useEffect(() => {
     const fetchAllData = async () => {
-      
+
+      if(params?._sr === "" || params?.slug === "") {
+        return;
+      }
+
       setIsLoading(true);
       setError(null);
 
       try {
         // First API call - Specialty
-        const specialtyResponse = await fetch(
-          `${API_BASE_URL}/doctors/get-ratemd-doctor-specialty?specialty_name=${doctor.specialty_url || 'chiropractor'}`
-        );
-        if (!specialtyResponse.ok) {
-          throw new Error('Specialty fetch failed');
+        const speciality = await fetchSpecialtyData(params?._spt_slug);
+        if(speciality?.length === 0) {
+          await fetchSpecialtyData('physician'); // Default
         }
-        const data = await specialtyResponse.json();
-        setSpecialtyData(data.results);
 
-        // Get search params on client side
-        const searchParams = typeof window !== 'undefined' 
-          ? new URLSearchParams(window.location.search) 
-          : new URLSearchParams();
-        
-        const slugParam = searchParams.get('slug');
-        const idParam = searchParams.get('id');
-        const iwgcSlugParam = searchParams.get('iwgc_slug');
-
-        // Second API call - Report
         let reportResponse: any;
         let reportData: any;
 
-        if (slugParam) {
-          reportResponse = await fetch(
-            `${API_BASE_URL}/doctors/ratemds/report/${encodeURIComponent(slugParam)}`
-          );
-        } else if (idParam && !slugParam) {
-          reportResponse = await fetch(
-            `${API_BASE_URL}/doctors/realself/report/${encodeURIComponent(idParam)}`
-          );
-        } else if (iwgcSlugParam) {
-          reportResponse = await fetch(
-            `${API_BASE_URL}/doctors/iwgc/report/${encodeURIComponent(iwgcSlugParam)}`
-          )
-        }
+        reportResponse = await fetch(
+            `${API_BASE_URL}/doctors/report/?source=${params?._sr}&identifier=${encodeURIComponent(params?.slug)}`
+        );
+
 
         if (reportResponse) {
           if (!reportResponse.ok) {
@@ -101,10 +143,10 @@ const DoctorProfile = () => {
       }
     };
 
-    if (doctor) {
+    // if (doctor) {
       fetchAllData();
-    }
-  }, [doctor, API_BASE_URL]);
+    // }
+  }, [params?._sr, params?.slug]);
 
   if (isLoading) {
     return <Loading />;
@@ -112,9 +154,9 @@ const DoctorProfile = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  if (!doctor) {
-    return <div>No doctor data found.</div>;
-  }
+  // if (!doctor) {
+  //   return <div>No doctor data found.</div>;
+  // }
 
   const getRatingLabel = (rating: number | undefined): string => {
     if (rating == null) return "N/A";
@@ -195,14 +237,10 @@ const DoctorProfile = () => {
   };
 
   const navigateToPayment = (doctor: any) => {
-    localStorage.setItem('doctor', JSON.stringify(doctor));
 
-    // If slug (from RateMDs) otherwise use id (from RealSelf)
-    if (doctor.slug) {
-      router.push(`/generate-full-report?slug=${encodeURIComponent(doctor.slug)}`);
-    } else if (doctor.id) {
-      router.push(`/generate-full-report?id=${encodeURIComponent(doctor.id)}`);
-    }
+    paymentPageUrlRenderer(doctor,params?._sr, router);
+
+
   };
 
   return (
@@ -214,15 +252,16 @@ const DoctorProfile = () => {
           <div className="flex flex-col w-[63%] max-md:ml-0 max-md:w-full">
             <div className="flex flex-col grow items-start font-medium text-slate-900 max-md:mt-10 max-md:max-w-full">
               <div className="text-7xl font-bold max-md:max-w-full max-md:text-4xl">
-                {doctor?.name}
+                {params?._nme}
               </div>
-              <div className="mt-1 text-4xl">{doctor?.specialty}</div>
+              <div className="mt-1 text-4xl">{params?._spt}</div>
               <div className="self-stretch mt-20 text-2xl max-md:mt-10 max-md:max-w-full">
-                {doctor?.specialties
-                  ? `Specializes in ${doctor.specialties.map((spec: any, i: any) => (
-                    `${spec}${i < doctor.specialties.length - 1 ? ', ' : ''}`
-                  )).join('')}.`
-                  : `Specializes in ${doctor?.specialty} in ${doctor?.city}, ${doctor?.state}.`}
+                {/*{params?.specialties*/}
+                {/*  ? `Specializes in ${doctor.specialties.map((spec: any, i: any) => (*/}
+                {/*    `${spec}${i < doctor.specialties.length - 1 ? ', ' : ''}`*/}
+                {/*  )).join('')}.`*/}
+                {/*  :*/}
+                Specializes in {params?._spt} in {params?._ct}, {params?._st}.
               </div>
             </div>
           </div>
@@ -238,15 +277,15 @@ const DoctorProfile = () => {
                     </span>
                   ))
                 ) : (
-                  `${doctor?.city}, ${doctor?.state}`
+                    <>{params?._ct}, {params?._st}</>
                 )}
               </div>
               <div className="flex gap-10 items-start px-8 pt-4 mt-14 text-white whitespace-nowrap rounded-3xl bg-slate-900 max-md:px-5 max-md:mt-10">
                 <div className="grow shrink text-2xl font-medium w-[90px]">
-                  {getRatingLabel(doctor?.rating)}
+                  {getRatingLabel(params?._rt)}
                 </div>
                 <div className="flex gap-px">
-                  <div className="grow text-9xl max-md:text-4xl">{doctor?.rating.toFixed(1)}</div>
+                  <div className="grow text-9xl max-md:text-4xl">{params?._rt.toFixed(1)}</div>
                   <div className="self-end mt-20 text-6xl max-md:mt-10 max-md:text-4xl">
                     /5
                   </div>
@@ -350,47 +389,47 @@ const DoctorProfile = () => {
   <div className="mt-11 w-full max-md:mt-10 max-md:max-w-full">
     <div className="flex gap-5 max-md:flex-col">
       {specialtyData.slice(0, 4).map((doctor: any, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02] flex-1"
-        >
-          <div className="flex flex-col h-full">
-            <div className="shrink-0 mb-4">
-              <img
-                src={doctor?.imagePath || "/placeholder.svg"}
-                alt={doctor?.name}
-                className="w-full h-48 object-contain rounded-xl"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/placeholder.png";
-                }}
-              />
-            </div>
-            <div className="flex flex-col flex-grow">
-              <h3 className="text-2xl font-bold mb-2">{doctor?.name}</h3>
-              <p className="text-gray-600 mb-4 text-lg">{doctor?.specialty}</p>
+              <div
+                key={index}
+                className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02] flex-1"
+              >
+                <div className="flex flex-col h-full">
+                  <div className="shrink-0 mb-4">
+                    <img
+                      src={doctor?.imagePath || "/placeholder.svg"}
+                      alt={doctor?.name}
+                      className="w-full h-48 object-contain rounded-xl"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/placeholder.png";
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-col flex-grow">
+                    <h3 className="text-2xl font-bold mb-2">{doctor?.name}</h3>
+                    <p className="text-gray-600 mb-4 text-lg">{doctor?.specialty}</p>
 
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
-                  <div className="text-sm text-gray-600">Score</div>
-                  <div className="text-xl font-bold">
-                    {doctor?.rating?.toFixed(1)}/5
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                        <div className="text-sm text-gray-600">Score</div>
+                        <div className="text-xl font-bold">
+                          {doctor?.rating?.toFixed(1)}/5
+                        </div>
+                      </div>
+                      <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
+                        <div className="text-sm text-gray-600">Reviews</div>
+                        <div className="text-xl font-bold">{doctor?.reviewCount}</div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => navigateToPayment(doctor)}
+                      className="mt-auto w-full bg-[#14183E] text-white py-2 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
+                    >
+                      Generate Report
+                    </button>
                   </div>
                 </div>
-                <div className="bg-[#EDF3FF] rounded-lg p-2 text-center">
-                  <div className="text-sm text-gray-600">Reviews</div>
-                  <div className="text-xl font-bold">{doctor?.reviewCount}</div>
-                </div>
               </div>
-
-              <button
-                onClick={() => navigateToPayment(doctor)}
-                className="mt-auto w-full bg-[#14183E] text-white py-2 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
-              >
-                Generate Report
-              </button>
-            </div>
-          </div>
-        </div>
             ))}
           </div>
         </div>
