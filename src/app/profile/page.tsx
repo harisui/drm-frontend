@@ -25,7 +25,7 @@ const DoctorProfile = () => {
   // const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [specialtyData, setSpecialtyData] = useState<Doctor[]>([]);
   const router = useRouter();
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const [params, setParams] = useState<{
     _spt: string;
     _spt_slug: string;
@@ -49,6 +49,7 @@ const DoctorProfile = () => {
   });
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
     const specialty = searchParams.get("_spt") || "chiropractor";
     const specialtySlug = searchParams.get("_spt_slug") || searchParams.get("_spt") || "chiropractor";
     const name = searchParams.get("_nme") || "Dr.";
@@ -70,7 +71,7 @@ const DoctorProfile = () => {
       _sr: source,
       lang : lang
     });
-  }, [searchParams]);
+  }, []);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
