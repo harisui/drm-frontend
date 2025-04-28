@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import Image from 'next/image';
@@ -10,10 +10,24 @@ import { useWishlist } from '@/context/WishlistContext';
 
 const Header = () => {
     const { wishlistCount, wishlistItems, removeFromWishlist } = useWishlist();
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <header className="fixed top-0 mb-3 left-0 right-0 z-50 bg-transparent">
-            <div className="container mx-auto px-4">
+        <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+            <div className="mx-auto px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
