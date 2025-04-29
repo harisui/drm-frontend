@@ -1,0 +1,20 @@
+.dr_intro {
+    padding: 20px 25px;
+}
+
+.dr_intro h1 {
+    font-size: 75px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.key-insights {
+    margin: 50px 0;
+}
+
+.reports_heading {
+    color: var(--text-primary);
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
