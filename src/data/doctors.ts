@@ -16,7 +16,7 @@ export const doctors: Doctor[] = [
         countryFlag: "/flags/usa.svg",
         specialistIn: "Cardiology",
         countryState: "New York, USA",
-        score: 4.8,
+        score: 9,
         reviews: 125,
         experience: 15
     },
@@ -26,7 +26,7 @@ export const doctors: Doctor[] = [
         countryFlag: "/flags/uk.svg",
         specialistIn: "Neurology",
         countryState: "London, UK",
-        score: 4.9,
+        score: 8,
         reviews: 98,
         experience: 12
     },
@@ -36,7 +36,17 @@ export const doctors: Doctor[] = [
         countryFlag: "/flags/canada.svg",
         specialistIn: "Pediatrics",
         countryState: "Toronto, Canada",
-        score: 4.7,
+        score: 2,
+        reviews: 156,
+        experience: 18
+    },
+    {
+        id: 4,
+        doctorName: "Dr. Michael Chen",
+        countryFlag: "/flags/canada.svg",
+        specialistIn: "Pediatrics",
+        countryState: "Toronto, Canada",
+        score: 5,
         reviews: 156,
         experience: 18
     },

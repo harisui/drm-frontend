@@ -32,6 +32,13 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
     const [isWishlisted, setIsWishlisted] = useState(false);
     const { addToWishlist, removeFromWishlist, wishlistItems } = useWishlist();
 
+    const getScoreColor = (score: number) => {
+        if (score >= 9) return 'bg-[#009246]';
+        if (score >= 7) return 'bg-[#009246]';
+        if (score >= 5) return 'bg-[#E95959]';
+        return 'bg-[#FDA15A]';
+    };
+
     // Sync wishlist state when component mounts or wishlistItems changes
     useEffect(() => {
         setIsWishlisted(wishlistItems.some(item => item.id === id));
@@ -50,69 +57,61 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
         }
     };
 
-    // Define background colors based on card ID
-    const getCardBackground = (id: number) => {
-        switch (id) {
-            case 1:
-                return 'bg-[#ADD8FF]';
-            case 2:
-                return 'bg-[#F5F6DA]';
-            case 3:
-                return 'bg-[#DCEEFD]';
-            default:
-                return 'bg-white';
-        }
-    };
+
 
     return (
-        <div className={`${getCardBackground(id)} rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 relative`}>
-            {/* Wishlist Button */}
+        <div className="bg-[#ADD8FF] rounded-3xl shadow-md p-4 hover:shadow-lg transition-shadow duration-300 relative">
+
             <button
                 onClick={toggleWishlist}
                 className="absolute top-4 right-4 p-2"
             >
                 <Heart
-                    size={20}
-                    className={isWishlisted ? "text-red-500 fill-red-500" : "text-gray-400"}
+                    size={26}
+                    className={isWishlisted ? "text-red-500 fill-red-500" : "text-[#0F152B]"}
                 />
             </button>
 
             {/* Doctor Info Section */}
             <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 flex items-center justify-center">
+                <div className="w-15 h-15 flex items-center justify-center">
                     <Image
                         src={countryFlag}
                         alt={`${countryState} flag`}
-                        width={32}
-                        height={32}
-                        className="rounded-lg border border-gray-200"
+                        width={35}
+                        height={35}
                     />
                 </div>
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-800">{doctorName}</h3>
-                    <p className="text-sm text-gray-600">{countryState}</p>
+                    <h3 className="text-xl font-bold text-primary">{doctorName}</h3>
+
                 </div>
             </div>
 
             {/* Specialist Info */}
             <div className="mb-4">
-                <p className="text-sm text-gray-600">Specialist in</p>
-                <p className="font-medium text-gray-800">{specialistIn}</p>
+                <p className="font-semibold text-xl text-primary">{specialistIn}</p>
+                <p className="text-sm text-primary">{countryState}</p>
             </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-3 gap-2">
-                <div className="text-center p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-                    <p className="text-xl font-bold text-blue-600">{score}</p>
-                    <p className="text-xs text-gray-600">Score</p>
+                <div className={`p-2 ${getScoreColor(score)} rounded-lg shadow-sm`}>
+                    <div>
+                        <p className='text-white'>Score</p>
+                        <div className="flex items-center justify-center">
+                            <span className="text-4xl font-bold text-white">{score}</span>
+                            <span className="text-md mt-4 text-white">/10</span>
+                        </div>
+                    </div>
                 </div>
-                <div className="text-center p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-                    <p className="text-xl font-bold text-blue-600">{reviews}</p>
-                    <p className="text-xs text-gray-600">Reviews</p>
+                <div className=" p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
+                    <p className="text-primary">Reviews</p>
+                    <p className="text-4xl text-center font-bold text-primary">{reviews}</p>
                 </div>
-                <div className="text-center p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-                    <p className="text-xl font-bold text-blue-600">{experience}+</p>
-                    <p className="text-xs text-gray-600">Years</p>
+                <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
+                    <p className="text-primary text-xs">Experience</p>
+                    <p className="text-4xl text-center font-bold text-primary">{experience}+</p>
                 </div>
             </div>
         </div>
@@ -200,7 +199,7 @@ const ReportCard: React.FC<{}> = () => {
                 selectedCountry={selectedCountry}
                 onCountrySelect={setSelectedCountry}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredDoctors.map((doctor) => (
                     <DoctorCard key={doctor.id} {...doctor} />
                 ))}
