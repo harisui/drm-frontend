@@ -40,7 +40,7 @@ const Header = () => {
                     <div className="flex items-center space-x-6">
                         {/* Navigation Links */}
                         <nav className="hidden md:flex space-x-6">
-                            <Link href="/about" className="text-primary-dark">
+                            <Link href="/about" className="text-primary">
                                 About
                             </Link>
                             <Link href="/how-it-works" className="text-primary-dark">
@@ -49,8 +49,8 @@ const Header = () => {
                         </nav>
 
                         {/* Icons */}
-                        <div className="flex items-center space-x-2">
-                            <button className="p-2 text-primary-dark">
+                        <div className="flex items-center  space-x-2">
+                            <button className="p-2 text-primary">
                                 <Search size={20} />
                             </button>
 
@@ -62,13 +62,12 @@ const Header = () => {
 
                             {/* Language Selector */}
                             <div className="relative">
-                                <button className="flex items-center space-x-1 p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                                <button className="flex mt-1 items-center space-x-1 p-2 text-gray-600 hover:text-blue-600 transition-colors">
                                     <Image
                                         src="/flags/us.svg"
                                         alt="English"
                                         width={32}
                                         height={32}
-                                        className="rounded-lg border border-gray-200"
                                     />
                                 </button>
                             </div>
