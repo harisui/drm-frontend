@@ -1,45 +1,121 @@
-'use client';
+"use client"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+    Card,
+    CardContent,
+} from "@/components/ui/card"
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart"
 
-interface ReviewData {
-    month: string;
-    reviews: number;
-}
+const chartData = [
+    { month: "2020", desktop: 186, mobile: 80 },
+    { month: "2021", desktop: 305, mobile: 200 },
+    { month: "2022", desktop: 237, mobile: 120 },
+    { month: "2023", desktop: 73, mobile: 190 },
+    { month: "2024", desktop: 209, mobile: 130 },
+    { month: "2025", desktop: 214, mobile: 140 },
+]
 
-const PatientReviews = () => {
-    // Sample data - replace with your actual data
-    const data: ReviewData[] = [
-        { month: 'Jan', reviews: 12 },
-        { month: 'Feb', reviews: 19 },
-        { month: 'Mar', reviews: 15 },
-        { month: 'Apr', reviews: 22 },
-        { month: 'May', reviews: 18 },
-        { month: 'Jun', reviews: 25 },
-    ];
+const chartConfig = {
+    desktop: {
+        label: "Desktop",
+        color: "#ADD8FF",
+    },
+    mobile: {
+        label: "Mobile",
+        color: "#F4A79D",
+    },
+} satisfies ChartConfig
 
+export function PatientReviews() {
     return (
-        <div className="w-full h-[400px] p-8 bg-white rounded-lg shadow">
-            <h2 className="reports_heading">Patient Reviews</h2>
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                    data={data}
-                    margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="reviews" fill="#8884d8" />
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-    );
-};
-
-export default PatientReviews;
+        <main>
+            <div className="flex items-center">
+                <h2 className="reports_heading px-8">Patient Reviews</h2>
+                <span className="bg-[#549CDE] text-white px-3 py-2 rounded-full">322 reviews</span>
+            </div>
+            <Card className="border-0 shadow-0">
+                <CardContent className="p-4">
+                    <ChartContainer config={chartConfig}>
+                        <AreaChart
+                            accessibilityLayer
+                            data={chartData}
+                            width={350}
+                            height={200}
+                            margin={{
+                                top: 10,
+                                left: 10,
+                                right: 10,
+                                bottom: 10,
+                            }}
+                        >
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                            <XAxis
+                                dataKey="month"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={8}
+                                // Removed the tickFormatter since we want full year displayed
+                                fontSize={12}
+                            />
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent />}
+                                wrapperStyle={{ fontSize: '12px' }}
+                            />
+                            <defs>
+                                <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                                    <stop
+                                        offset="5%"
+                                        stopColor="#ADD8FF"
+                                        stopOpacity={0.8}
+                                    />
+                                    <stop
+                                        offset="95%"
+                                        stopColor="#ADD8FF"
+                                        stopOpacity={0.1}
+                                    />
+                                </linearGradient>
+                                <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                                    <stop
+                                        offset="5%"
+                                        stopColor="#F4A79D"
+                                        stopOpacity={0.8}
+                                    />
+                                    <stop
+                                        offset="95%"
+                                        stopColor="#F4A79D"
+                                        stopOpacity={0.1}
+                                    />
+                                </linearGradient>
+                            </defs>
+                            <Area
+                                dataKey="mobil  e"
+                                type="natural"
+                                fill="url(#fillMobile)"
+                                fillOpacity={0.4}
+                                stroke="#F4A79D"
+                                strokeWidth={1.5}
+                                stackId="a"
+                            />
+                            <Area
+                                dataKey="desktop"
+                                type="natural"
+                                fill="url(#fillDesktop)"
+                                fillOpacity={0.4}
+                                stroke="#ADD8FF"
+                                strokeWidth={1.5}
+                                stackId="a"
+                            />
+                        </AreaChart>
+                    </ChartContainer>
+                </CardContent>
+            </Card>
+        </main>
+    )
+}
