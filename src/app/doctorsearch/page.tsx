@@ -17,10 +17,6 @@ const DoctorSearch = () => {
   const router = useRouter();
   const [apiSources, setApiSources] = useState<string>("");
 
-
-
-
-
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
@@ -47,7 +43,6 @@ const DoctorSearch = () => {
     setError(null);
     setDoctors([]);
 
-    // Try RateMDs
     try {
       const rateMDsResponse = await fetch(
         `${API_BASE_URL}/doctors/search?query=${encodeURIComponent(query)}`
@@ -55,10 +50,6 @@ const DoctorSearch = () => {
       const doctorsFetched = await rateMDsResponse.json();
 
       if (doctorsFetched.success && doctorsFetched.results?.length > 0) {
-        // const formattedRateMDsResults = doctorsFetched.results.map((doc: Doctor) => ({
-        //   ...doc,
-        //   // source: 'RateMDs'
-        // }));
         console.log('formattedRateMDsResults', doctorsFetched);
         setDoctors(doctorsFetched.results);
         setApiSources(doctorsFetched.source);
@@ -69,166 +60,66 @@ const DoctorSearch = () => {
       console.error("RateMDs fetch failed:", err);
     }
 
-    // Try RealSelf
-    // try {
-    //   const realSelfResponse = await fetch(
-    //     `${API_BASE_URL}/doctors/realself-search?query=${encodeURIComponent(query)}`
-    //   );
-    //   const realSelfData = await realSelfResponse.json();
-    //
-    //   if (realSelfData.success && realSelfData.results?.length > 0) {
-    //     const formattedRealSelfResults = realSelfData.results.map((doc: Doctor) => ({
-    //       ...doc,
-    //       source: 'RealSelf'
-    //     }));
-    //     setDoctors(formattedRealSelfResults);
-    //     setIsLoading(false);
-    //     return;
-    //   }
-    // } catch (err) {
-    //   console.error("RealSelf fetch failed:", err);
-    // }
-    //
-    // // Try IWGC if both RateMDs and RealSelf didn't return results
-    // try {
-    //   const iwgcResponse = await fetch(
-    //     `${API_BASE_URL}/doctors/iwgc-search?query=${encodeURIComponent(query)}`
-    //   );
-    //   const iwgcData = await iwgcResponse.json();
-    //
-    //   if (iwgcData.success && iwgcData.results?.length > 0) {
-    //     const formattedIwgcResults = iwgcData.results.map((doc: Doctor) => ({
-    //       ...doc,
-    //       source: 'I Want Great Care'
-    //     }));
-    //     setDoctors(formattedIwgcResults);
-    //     setIsLoading(false);
-    //     return; // Exit if successful
-    //   }
-    // } catch (err) {
-    //   console.error("IWGC fetch failed:", err);
-    //   // No more APIs to try
-    // }
-
-    // If all APIs fail or return no results
     setError("No doctors found");
     setIsLoading(false);
   }
 
-
-
   const navigateToPayment = (doctor: any) => {
-
     paymentPageUrlRenderer(doctor, apiSources, router);
-
   };
-
 
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8">
-      <div className="mx-auto max-w-6xl mt-12">
+      <div className="mx-auto mt-28">
         {/* Header Section */}
         <div className="mb-8 lg:mb-12">
-          <div className="max-w-2xl mx-auto relative">
-            {/* Country Filter */}
-            {/* <div className="absolute right-0 top-0">
-              <div className="relative">
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={countrySearch}
-                      onChange={(e) => setCountrySearch(e.target.value)}
-                      placeholder="Search country..."
-                      className="w-48 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    />
-                    {countrySearch && (
-                      <button
-                        onClick={() => setCountrySearch("")}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => setIsCountryOpen(!isCountryOpen)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-g
-                            ray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo00"
-                  >
-                    <span>{selectedCountry || 'Select Country'}</span>
-                    <svg
-                      className={`w-5 h-5 transition-transform duration-200 ${isCountryOpen ? 'transform rotate-180' : ''}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
+          <div className="max-w-[1100px] mx-auto">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'>
+              {/* Text Content */}
+              <div className="order-2 md:order-1">
+                <div className="text-left mb-1">
+                  <h1 className="text-2xl font-semibold mb-2 lg:text-5xl lg:mb-4">
+                    Hello <span className="inline-block animate-wave">👋</span>
+                  </h1>
+                  <h2 className="text-3xl font-bold lg:text-6xl">Find your doctor</h2>
                 </div>
 
-                {isCountryOpen && (
-                  <div className="absolute z-10 w-48 mt-1 bg-white rounded-md shadow-lg">
-                    <ul className="py-1 overflow-auto text-base max-h-60">
-                      {filteredCountries.map((country) => (
-                        <li
-                          key={country}
-                          className={`px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100 ${selectedCountry === country ? 'bg-gray-100' : ''
-                            }`}
-                          onClick={() => {
-                            setSelectedCountry(country);
-                            setIsCountryOpen(false);
-                            setCountrySearch("");
-                          }}
-                        >
-                          {country}
-                        </li>
-                      ))}
-                      {filteredCountries.length === 0 && (
-                        <li className="px-4 py-2 text-sm text-gray-500 text-center">
-                          No countries found
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                )}
+                {/* Search Input */}
+                <div className="relative mt-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  <input
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    type="text"
+                    placeholder="Search doctor by name or department"
+                    className="w-full rounded-lg bg-white py-3 pl-12 pr-4 text-base shadow-lg outline-none ring-1 ring-gray-100 lg:py-4 lg:text-lg"
+                  />
+                </div>
               </div>
-            </div> */}
 
-            {/* Left-aligned text within search input's width */}
-            <div className="text-left mb-6">
-              <h1 className="text-4xl font-bold mb-2 lg:text-5xl lg:mb-4">
-                Hello <span className="inline-block animate-wave">👋</span>
-              </h1>
-              <h2 className="text-5xl font-bold lg:text-6xl">Find your doctor</h2>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-              <input
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                type="text"
-                placeholder="Search doctor by name or department"
-                className="w-full rounded-full bg-white py-3 pl-12 pr-4 text-base shadow-lg outline-none ring-1 ring-gray-100 lg:py-4 lg:text-lg"
-              />
+              {/* Image */}
+              <div className="order-1 md:order-2 relative w-full h-64 md:h-80">
+                <Image
+                  src="/assets/reports.png"
+                  alt="Doctor search illustration showing medical reports"
+                  fill
+                  className="object-contain"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/placeholder-doctor.png";
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -258,16 +149,16 @@ const DoctorSearch = () => {
           {doctors.map((doctor) => (
             <div
               key={doctor.id || uuidv4()}
-              className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02]"
+              className="bg-white rounded-2xl shadow-lg p-4 transition-transform hover:scale-[1.02] hover:shadow-xl"
             >
               <div className="flex flex-col h-full">
                 <div className="shrink-0 mb-4">
                   <img
-                    src={doctor.imagePath || "/placeholder.svg"}
-                    alt={doctor.name}
+                    src={doctor.imagePath || "/placeholder-doctor.svg"}
+                    alt={`${doctor.name}'s profile`}
                     className="w-full h-48 object-contain rounded-xl"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder.png";
+                      (e.target as HTMLImageElement).src = "/placeholder-doctor.png";
                     }}
                   />
                 </div>
@@ -328,4 +219,3 @@ const DoctorSearch = () => {
 };
 
 export default DoctorSearch;
-9
