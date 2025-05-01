@@ -35,11 +35,8 @@ const chartConfig = {
 export function PatientReviews() {
     return (
         <main>
-            <div className="flex items-center">
-                <h2 className="reports_heading px-8">Patient Reviews</h2>
-                <span className="bg-[#549CDE] text-white px-3 py-2 rounded-full">322 reviews</span>
-            </div>
-            <Card className="border-0 shadow-0">
+            <h2 className="reports_heading px-8">Patient Reviews</h2>
+            <Card className="mx-7">
                 <CardContent className="p-4">
                     <ChartContainer config={chartConfig}>
                         <AreaChart
@@ -95,7 +92,7 @@ export function PatientReviews() {
                                 </linearGradient>
                             </defs>
                             <Area
-                                dataKey="mobil  e"
+                                dataKey="mobile"
                                 type="natural"
                                 fill="url(#fillMobile)"
                                 fillOpacity={0.4}
