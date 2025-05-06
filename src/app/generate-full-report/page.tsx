@@ -4,53 +4,25 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const GenerateFullReport = () => {
-const [doctor, setDoctor] = useState<Doctor | null>(null);  
+const [doctor, setDoctor] = useState<Doctor | null>(null);
 const router = useRouter();
 
-useEffect(() => {
-  const storedDoctor = localStorage.getItem("doctor");
-  if (storedDoctor) {
-    setDoctor(JSON.parse(storedDoctor));
-  }
-
-  const searchParams = new URLSearchParams(window.location.search);
-  // Check for either slug or id
-  const slugParam = searchParams.get('slug');
-  const idParam = searchParams.get('id');
-  const iwgc_slug = searchParams.get('iwgc_slug');
-  if (slugParam) {
-    console.log("Identifier (slug) from URL:", slugParam);
-  } else if (idParam) {
-    console.log("Identifier (id) from URL:", idParam);
-  } else if (iwgc_slug) {
-    console.log("Identified (iwgc) from URL:", iwgc_slug);
-  } else {
-    console.warn("No identifier found in URL");
-  }
-}, []);
-  
+// useEffect(() => {
+//   // const storedDoctor = localStorage.getItem("doctor");
+//   // if (storedDoctor) {
+//     // setDoctor(JSON.parse(storedDoctor));
+//   // }
+//
+//   const searchParams = new URLSearchParams(window.location.search);
+//   // Check for either slug or id
+//   const slugParam = searchParams.get('slug');
+//
+// }, []);
+//
 const navigateToReport = () => {
   const searchParams = new URLSearchParams(window.location.search);
-  const slugParam = searchParams.get('slug');
-  const idParam = searchParams.get('id');
-  const iwgcSlugParam = searchParams.get('iwgc_slug');
-
-  let paramName = '';
-  let paramValue = '';
-
-  if (slugParam) {
-    paramName = 'slug';
-    paramValue = slugParam;
-  } else if (idParam) {
-    paramName = 'id';
-    paramValue = idParam;
-  } else if (iwgcSlugParam) {
-    paramName = 'iwgc_slug';
-    paramValue = iwgcSlugParam;
-  }
-
-  if (paramName && paramValue) {
-    router.push(`/profile?${paramName}=${encodeURIComponent(paramValue!)}`);
+  if (searchParams.has('slug') && searchParams.has('_sr')) {
+    router.push(`/profile${window.location.search}`);
   } else {
     console.warn("No identifier to navigate with");
   }
