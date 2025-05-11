@@ -19,10 +19,19 @@ const router = useRouter();
 //
 // }, []);
 //
-const navigateToReport = () => {
+const skipToReport = () => {
   const searchParams = new URLSearchParams(window.location.search);
   if (searchParams.has('slug') && searchParams.has('_sr')) {
     router.push(`/profile${window.location.search}`);
+  } else {
+    console.warn("No identifier to navigate with");
+  }
+};
+
+const navigateToFullReport = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.has('slug') && searchParams.has('_sr')) {
+    router.push(`/fullreport${window.location.search}`);
   } else {
     console.warn("No identifier to navigate with");
   }
@@ -135,13 +144,14 @@ const navigateToReport = () => {
             </div>
             <div className="flex flex-col space-y-4">
               <button
+               onClick={() => navigateToFullReport()}
                 type="submit"
                 className="w-full bg-gray-900 text-white py-4 rounded-t-xl rounded-b-2xl font-medium hover:bg-gray-800 transition"
               >
                 Generate Report
               </button>
               <button
-                onClick={() => navigateToReport()}
+                onClick={() => skipToReport()}
                 type="button"
                 className="w-full bg-gray-300 text-gray-900 py-4 rounded-xl font-medium hover:bg-gray-400 transition"
               >
