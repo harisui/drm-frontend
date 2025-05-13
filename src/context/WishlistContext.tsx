@@ -5,8 +5,16 @@ interface WishlistItem {
     id: number;
     name: string;
     specialty: string;
+    specialty_url?: string;
     imagePath?: string;
-}
+    source: string;
+    slug?: string;
+    city?: string;
+    state?: string;
+    rating?: number;
+    profileLink?: string;
+  }
+  
 
 interface WishlistContextType {
     wishlistCount: number;

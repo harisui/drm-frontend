@@ -6,12 +6,15 @@ export interface Doctor {
     reviewCount: number;
     city: string;
     state: string;
+    country_slug: string;
+    countryState: string,
     imagePath: string;
     profileLink: string;
     slug: string;
     source: string;
     specialty_url: string;
     specialties?: string[];
+    experienceYears: number;
   }
   
   export interface Report {
