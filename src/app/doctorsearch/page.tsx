@@ -98,7 +98,7 @@ const DoctorSearch = () => {
     if (isWishlisted) {
       removeFromWishlist(doctor.id);
     } else {
-      addToWishlist(doctor);
+      addToWishlist({ ...doctor, source: apiSources });
     }
   };
 

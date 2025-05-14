@@ -2,7 +2,9 @@
 import { Doctor } from '@/types';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface WishlistItem extends Doctor {} 
+interface WishlistItem extends Doctor {
+    source: string;
+} 
 
 interface WishlistContextType {
     wishlistCount: number;

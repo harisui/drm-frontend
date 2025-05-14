@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Heart, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { paymentPageUrlRenderer } from '@/services/helper';
 import './style.css'
 interface WishlistCounterProps {
     count: number;
@@ -19,6 +21,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
     onGenerateAllReports
 }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter();
 
     return (
         <div className="relative left-2">
@@ -83,7 +86,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                                                 <X size={20} />
                                             </button>
                                             <button
-                                                onClick={() => onGenerateReport(item.id)}
+                                                onClick={() => paymentPageUrlRenderer(item, item.source, router)}
                                                 className="text-primary bg-[#ADD8FF] px-5 py-1 rounded-md text-sm flex items-center space-x-1"
                                             >
                                                 <span>Generate</span>
