@@ -1,12 +1,8 @@
 "use client"
+import { Doctor } from '@/types';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface WishlistItem {
-    id: number;
-    name: string;
-    specialty: string;
-    imagePath?: string;
-}
+interface WishlistItem extends Doctor {} 
 
 interface WishlistContextType {
     wishlistCount: number;

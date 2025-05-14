@@ -9,6 +9,7 @@ export interface Doctor {
     imagePath: string;
     profileLink: string;
     slug: string;
+    country_slug: string;
     source: string;
     specialty_url: string;
     specialties?: string[];
