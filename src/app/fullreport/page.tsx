@@ -8,6 +8,7 @@ import Summary from "./_components/summary";
 import FAQs from "./_components/faq";
 import Footer from "./_components/footer";
 import { Doctor, Report } from "@/types";
+import LoadingScreen from "@/components/ui/loader/page";
 
 const FullReport = () => {
     const [showExitPopup, setShowExitPopup] = useState(false);
@@ -187,6 +188,10 @@ const FullReport = () => {
         setShowExitPopup(false);
         setMouseLeaving(false);
     };
+
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
 
     return (
         <main className="relative">

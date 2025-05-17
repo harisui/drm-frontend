@@ -10,8 +10,6 @@ export default function LoadingScreen() {
     "We are searching the whole Internet",
     "Scanning the patient sentiment",
     "Aggregating the reviews",
-    "Lorem ipsum dolor sit amet",
-    "Lorem ipsum dolor sit amet",
   ];
 
   useEffect(() => {
@@ -34,7 +32,7 @@ export default function LoadingScreen() {
         />
       </div>
 
-      {/* <div className="space-y-4 max-w-[420px] w-full mx-auto">
+      <div className="space-y-4 max-w-[420px] w-full mx-auto">
         {steps.map((step, index) => (
           <div
             key={index}
@@ -64,7 +62,7 @@ export default function LoadingScreen() {
             </span>
           </div>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 }
