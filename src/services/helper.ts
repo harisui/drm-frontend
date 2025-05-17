@@ -1,6 +1,6 @@
 export const paymentPageUrlRenderer = (doctor: any, apiSources:string, router:any) => {
     // localStorage.setItem('doctor', JSON.stringify(doctor));
-    let path = '/generate-full-report?';
+    let path = '/emailReport?';
     const queryParams = {
         'slug' : encodeURIComponent(doctor?.slug || doctor?.id || ''),
         '_spt' : doctor?.specialty || 'chiropractor',

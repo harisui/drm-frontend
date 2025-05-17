@@ -195,9 +195,8 @@ const DoctorSearch = () => {
 
         {/* State Filter */}
         {availableStates.length > 0 && (
-          <div className="relative flex justify-end mb-4 max-w-[1100px] mx-auto">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-px bg-gray-300"></div>
+          <div className="flex w-full max-w-[1440px] mx-auto mb-4">
+            <div className="ml-auto relative">
               <button
                 onClick={() => setShowStateFilter(!showStateFilter)}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -209,7 +208,6 @@ const DoctorSearch = () => {
                   className={`transition-transform duration-200 ${showStateFilter ? 'rotate-180' : ''}`}
                 />
               </button>
-            </div>
 
             {showStateFilter && (
               <div className="absolute right-0 z-10 w-48 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
@@ -246,11 +244,12 @@ const DoctorSearch = () => {
                 </div>
               </div>
             )}
+            </div>
           </div>
         )}
 
         {/* Doctor Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1100px] mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1440px] mx-auto">
           {isLoading && (
             <div className="col-span-full flex justify-center items-center">
               <div className="w-32 h-32 animate-spin">
