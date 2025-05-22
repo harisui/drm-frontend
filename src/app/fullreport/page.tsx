@@ -39,7 +39,7 @@ const FullReport = () => {
         lang: "en"
     });
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-    
+
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
         const specialty = searchParams.get("_spt") || "chiropractor";
@@ -76,7 +76,7 @@ const FullReport = () => {
 
     useEffect(() => {
         const fetchAllData = async () => {
-            if(!params._sr || !params.slug) return;
+            if (!params._sr || !params.slug) return;
 
             setIsLoading(true);
             setError(null);
@@ -85,28 +85,28 @@ const FullReport = () => {
                 // Replicate profile page's data fetching flow
                 // 1. Fetch specialty data first
                 const speciality = await fetchSpecialtyData(params._spt_slug);
-                if(speciality?.length === 0) {
+                if (speciality?.length === 0) {
                     await fetchSpecialtyData('physician');
                 }
 
                 // 2. Fetch report data with proper slug handling
                 let identifier = params.slug;
-                
+
                 // Match profile page's IWGC handling
-                if(params._sr === 'iwgc') {
+                if (params._sr === 'iwgc') {
                     const slugFromLink = getSlugFromProfileLink(params.slug);
                     identifier = slugFromLink || params.slug;
                 }
 
                 // Match profile page's single encoding
                 const encodedSlug = encodeURIComponent(identifier);
-                
+
                 const reportResponse = await fetch(
                     `${API_BASE_URL}/doctors/report/?source=${params._sr}&identifier=${encodedSlug}`
                 );
 
                 if (!reportResponse.ok) throw new Error('Report fetch failed');
-                
+
                 // Replicate profile page's data processing
                 const reportData = await reportResponse.json();
                 const processedReport: Report = {
@@ -134,11 +134,11 @@ const FullReport = () => {
         fetchAllData();
     }, [params._sr, params.slug, params._spt_slug]);
 
-        // Add profile page's slug extraction
-        const getSlugFromProfileLink = (profileLink: string): string | null => {
-            const match = profileLink.match(/\/doctors\/([^/]+)/);
-            return match ? match[1] : null;
-        };
+    // Add profile page's slug extraction
+    const getSlugFromProfileLink = (profileLink: string): string | null => {
+        const match = profileLink.match(/\/doctors\/([^/]+)/);
+        return match ? match[1] : null;
+    };
 
     useEffect(() => {
         // Track mouse leaving top of window
@@ -227,8 +227,8 @@ const FullReport = () => {
 
             {/* Page Content with space-y-16 and lower z-index */}
             <div className={`space-y-16 transition-opacity duration-300 ${showExitPopup ? 'opacity-30' : 'opacity-100'}`}>
-            <div className="bg-[#E5EEFB] pt-20 relative z-0">
-                    <Intro 
+                <div className="bg-[#E5EEFB] pt-20 relative z-0">
+                    <Intro
                         name={params._nme}
                         specialty={params._spt}
                         location={`${params._ct}, ${params._st}`}
@@ -239,20 +239,20 @@ const FullReport = () => {
                     <KeyInsights insights={report?.insights || []} />
                 </div>
                 <div className="px-4 md:px-8">
-                    <PatientReviews 
-                        positiveComments={report?.positiveComments}
-                        negativeComment={report?.negativeComment}
+                    <PatientReviews
+                        yearlyData={report?.yearlyData}
+                        totalReviews={report?.totalReviews}
                     />
                 </div>
                 <div className="px-4 md:px-8">
-                    <Feedback 
+                    <Feedback
                         positiveComments={report?.positiveComments}
                         negativeComment={report?.negativeComment}
                         rating={params._rt}
                     />
                 </div>
                 <div>
-                    <Summary 
+                    <Summary
                         summaryText={report?.summary}
                         doctorName={params._nme}
                         rating={params._rt}

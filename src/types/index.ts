@@ -25,4 +25,11 @@ export interface Doctor {
     insights: string[];
     summary: string;
     locations?: string[];
+        yearlyData?: Array<{
+        year: string
+        positive: number
+        negative: number
+        total?: number
+    }>
+    totalReviews?: number
   }

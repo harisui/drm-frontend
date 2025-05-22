@@ -17,6 +17,13 @@ interface PatientReviewsProps {
         second?: { date?: string }
     }
     negativeComment?: { date?: string }
+    yearlyData?: Array<{
+        year: string
+        positive: number
+        negative: number
+        total?: number
+    }>
+    totalReviews?: number
 }
 
 const chartConfig = {
@@ -30,51 +37,26 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function PatientReviews({ positiveComments, negativeComment }: PatientReviewsProps) {
-    // Process review dates into chart data
-    const processChartData = () => {
-        const yearCounts: Record<string, { positive: number; negative: number }> = {}
+export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps) {
 
-        const extractYear = (dateStr?: string): string | null => {
-            if (!dateStr) return null
-            const parts = dateStr.split(' ')
-            const year = parts[1]
-            return year && /^\d{4}$/.test(year) ? year : null
-        }
+    const chartData = yearlyData?.map(item => ({
+        year: item.year,
+        positive: item.positive,
+        negative: item.negative
+    })) || []
 
-        
-        // Process positive comments
-        [positiveComments?.first, positiveComments?.second].forEach(comment => {
-            const year = extractYear(comment?.date)
-            if (year) {
-                yearCounts[year] = yearCounts[year] || { positive: 0, negative: 0 }
-                yearCounts[year].positive += 1
-            }
-        })
-
-
-        // Process negative comment
-        const negativeYear = extractYear(negativeComment?.date)
-        if (negativeYear) {
-            yearCounts[negativeYear] = yearCounts[negativeYear] || { positive: 0, negative: 0 }
-            yearCounts[negativeYear].negative += 1
-        }
-
-        return Object.entries(yearCounts)
-            .sort(([a], [b]) => parseInt(a) - parseInt(b))
-            .map(([year, counts]) => ({
-                year,
-                positive: counts.positive,
-                negative: counts.negative
-            }))
-    }
-
-    const chartData = processChartData()
-    const hasData = chartData.length > 0
+    const hasData = chartData.some(item => item.positive > 0 || item.negative > 0)
 
     return (
         <main>
-            <h2 className="reports_heading px-8">Patient Reviews Timeline</h2>
+
+            <div className="flex items-center px-8 space-x-4">
+                <h2 className="reports_heading">Patient Reviews Timeline</h2>
+                <span className="mb-3 bg-[#4da6ff] text-white text-xs font-semibold px-4 py-3 rounded-full flex items-center justify-center leading-none">
+                    {totalReviews} reviews
+                </span>
+            </div>
+
             <Card className="mx-7">
                 <CardContent className="p-4">
                     {hasData ? (
