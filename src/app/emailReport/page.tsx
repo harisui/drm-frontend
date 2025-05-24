@@ -25,7 +25,7 @@ const EmailReport = () => {
         Success!
       </h1>
       <p className="mt-3 text-lg text-black sm:mt-4 sm:text-xl md:text-2xl">
-        The report on Dr {doctorName} has been generated.
+        The report on {doctorName} has been generated.
       </p>
     </div>
 
