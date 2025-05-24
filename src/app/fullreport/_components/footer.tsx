@@ -3,7 +3,13 @@ import { Download } from "lucide-react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
-const Footer = () => {
+interface FooterProps {
+    onDownload: () => void;
+    isGeneratingPDF: boolean;
+  }
+  
+
+const Footer = ({ onDownload, isGeneratingPDF} : FooterProps) => {
     // Sample doctor data (you can replace with actual data)
     const featuredDoctor = {
         doctorName: "Dr. Sarah Johnson",
@@ -31,9 +37,9 @@ const Footer = () => {
                 <button className="bg-white px-6 py-5 text-xl font-semibold rounded-lg hover:bg-gray-100 transition-colors">
                     Scan Another Doctor
                 </button>
-                <button className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors">
+                <button onClick={onDownload} className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors">
                     <Download size={24} />
-                    <span>Download Report</span>
+                    <span>{isGeneratingPDF ? "Generating..." : "Download Report"}</span>
                 </button>
             </div>
             <div className="">

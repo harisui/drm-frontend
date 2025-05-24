@@ -12,6 +12,8 @@
     "@heroicons/react": "^2.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "lucide-react": "^0.503.0",
     "next": "15.1.6",
     "nookies": "^2.5.2",

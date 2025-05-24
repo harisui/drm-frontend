@@ -1,4 +1,5 @@
 "use client"
+import { createRoot } from 'react-dom/client';
 import React, { useEffect, useState } from "react";
 import Intro from "./_components/intro";
 import KeyInsights from "./_components/key-insights";
@@ -8,8 +9,10 @@ import Summary from "./_components/summary";
 import FAQs from "./_components/faq";
 import Footer from "./_components/footer";
 import { Doctor, Report } from "@/types";
-import LoadingScreen from "@/components/ui/loader/page";
-
+import PrintableReport from "./_components/printable-report";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import LoadingScreen from '@/components/ui/loader/page';
 const FullReport = () => {
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [mouseLeaving, setMouseLeaving] = useState(false);
@@ -17,6 +20,7 @@ const FullReport = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [specialtyData, setSpecialtyData] = useState<Doctor[]>([]);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     const [params, setParams] = useState<{
         _spt: string;
         _spt_slug: string;
@@ -178,15 +182,71 @@ const FullReport = () => {
         };
     }, [showExitPopup]);
 
-    const handleDownload = () => {
-        // Implement your download logic here
-        console.log("Downloading report...");
-        setShowExitPopup(false);
+    const handleDownload = async () => {
+        setIsGeneratingPDF(true);
+        try {
+            await generatePDF();
+        } finally {
+            setIsGeneratingPDF(false);
+            setShowExitPopup(false);
+        }
     };
 
     const handleContinue = () => {
         setShowExitPopup(false);
         setMouseLeaving(false);
+    };
+
+    const generatePDF = async () => {
+        try {
+            // Create a temporary div with A4 dimensions (no extra padding)
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.width = '210mm'; // A4 width
+            tempDiv.style.height = '297mm'; // A4 height
+            tempDiv.style.margin = '0';
+            tempDiv.style.padding = '0';
+            tempDiv.style.boxSizing = 'border-box';
+
+            document.body.appendChild(tempDiv);
+
+            // Create a root and render content
+            const root = createRoot(tempDiv);
+            root.render(<PrintableReport params={params} report={report} />);
+
+            // Wait for rendering to complete
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            const pdf = new jsPDF('p', 'mm', 'a4'); // Use mm units for better precision
+            const options = {
+                scale: 2,
+                useCORS: true,
+                width: 794, // A4 width in pixels at 96 DPI (210mm)
+                height: 1123, // A4 height in pixels at 96 DPI (297mm)
+                windowWidth: 794,
+                windowHeight: 1123,
+                logging: false,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            };
+
+            const canvas = await html2canvas(tempDiv, options);
+
+            // Clean up
+            root.unmount();
+            document.body.removeChild(tempDiv);
+
+            const imgData = canvas.toDataURL('image/png', 1.0);
+
+            // Add image to PDF with exact A4 dimensions (no margins)
+            pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+
+            pdf.save(`${params._nme.replace(/\s+/g, '_')}_Report.pdf`);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Failed to generate PDF. Please try again.');
+        }
     };
 
     if (isLoading) {
@@ -262,7 +322,7 @@ const FullReport = () => {
                     <FAQs />
                 </div>
                 <div className="">
-                    <Footer />
+                    <Footer onDownload={handleDownload} isGeneratingPDF={isGeneratingPDF} />
                 </div>
             </div>
         </main>
