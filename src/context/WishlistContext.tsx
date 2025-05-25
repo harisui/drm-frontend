@@ -1,6 +1,6 @@
 "use client"
 import { Doctor } from '@/types';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface WishlistItem extends Doctor {
     source: string;
@@ -30,10 +30,31 @@ interface WishlistProviderProps {
 export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) => {
     const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
 
+    // Load from localStorage on initial render
+    useEffect(() => {
+        const savedWishlist = localStorage.getItem('wishlist');
+        if (savedWishlist) {
+            try {
+                const parsedItems = JSON.parse(savedWishlist);
+                if (Array.isArray(parsedItems)) {
+                    setWishlistItems(parsedItems);
+                }
+            } catch (error) {
+                console.error('Failed to parse wishlist from localStorage', error);
+            }
+        }
+    }, []);
+
+    // Save to localStorage whenever wishlist changes
+    useEffect(() => {
+        localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
+    }, [wishlistItems]);
+
     const addToWishlist = (item: WishlistItem) => {
         setWishlistItems(prev => {
             if (!prev.some(i => i.id === item.id)) {
-                return [...prev, item];
+                const newItems = [...prev, item];
+                return newItems;
             }
             return prev;
         });
