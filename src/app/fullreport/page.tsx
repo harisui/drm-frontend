@@ -319,7 +319,10 @@ const FullReport = () => {
                     />
                 </div>
                 <div className="px-4 md:px-8">
-                    <FAQs />
+                    <FAQs  
+                        params={params} 
+                        report={report || { insights: [], summary: '', totalReviews: 0 }}
+                    />
                 </div>
                 <div className="">
                     <Footer onDownload={handleDownload} isGeneratingPDF={isGeneratingPDF} />
