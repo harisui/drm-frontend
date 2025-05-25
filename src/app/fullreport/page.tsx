@@ -203,8 +203,8 @@ const FullReport = () => {
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '-9999px';
-            tempDiv.style.width = '210mm'; // A4 width
-            tempDiv.style.height = '297mm'; // A4 height
+            tempDiv.style.width = '230mm'; // A4 width
+            tempDiv.style.height = '300mm'; // A4 height
             tempDiv.style.margin = '0';
             tempDiv.style.padding = '0';
             tempDiv.style.boxSizing = 'border-box';
@@ -216,7 +216,7 @@ const FullReport = () => {
             root.render(<PrintableReport params={params} report={report} />);
 
             // Wait for rendering to complete
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 3000));
 
             const pdf = new jsPDF('p', 'mm', 'a4'); // Use mm units for better precision
             const options = {

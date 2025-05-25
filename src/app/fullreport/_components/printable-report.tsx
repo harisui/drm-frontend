@@ -161,18 +161,18 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
 
       {/* Patient Reviews Section */}
       <div className="px-4 py-3 flex-grow">
-        <div className="flex items-center space-x-2 mb-2">
+        <div className="flex items-center gap-2 mb-2">
           <h2 className="text-sm font-bold">Patient Reviews Timeline</h2>
           {report?.totalReviews && (
-            <span className="bg-[#4da6ff] text-white text-xs px-2 py-1 rounded-full">
-              {report.totalReviews} reviews
-            </span>
+            <p className="   text-xs px-2 py-1 pt-5 rounded-full font-bold flex items-center justify-center mt-1">
+              ({report.totalReviews} reviews)
+            </p>
           )}
         </div>
 
-        <div className="p-2">
+        <div className="p-2 mb-1 flex justify-center items-center  rounded-md">
           {hasData ? (
-            <div style={{ width: '100%', height: '180px' }}>
+            <div style={{ width: '700px', height: '400px' }}>
               <ChartContainer config={chartConfig}>
                 <AreaChart
                   data={chartData}
@@ -271,38 +271,39 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
             </div>
           )}
         </div>
-      </div>
 
-      {/* Summary Section */}
-      <div className="bg-[#E5EEFB] py-3 flex-shrink-0 mt-auto">
-        <h2 className="text-sm font-bold px-4 mb-2">Summary</h2>
-        <div className="grid grid-cols-3 gap-4 px-4">
-          <div className="col-span-2 text-xs">
-            <p className="leading-tight">{report?.summary || "No summary available."}</p>
-          </div>
-          <div>
-            <h3 className="text-xs font-medium mb-2">
-              {params._nme}
-            </h3>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="bg-green-600 text-white rounded w-16 h-12 flex items-center justify-center">
-                <span className="text-xl font-bold">{score}</span>
-                <span className="text-xs mt-1">/10</span>
+        {/* Summary Section */}
+        <div className="bg-[#E5EEFB] py-3">
+          <h2 className="text-sm font-bold px-4 mb-2">Summary</h2>
+          <div className="grid grid-cols-3 gap-4 px-4">
+            <div className="col-span-2 text-xs">
+              <p className="leading-tight">{report?.summary || "No summary available."}</p>
+            </div>
+            <div>
+              <h3 className="text-xs font-medium mb-2">
+                {params._nme}
+              </h3>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="bg-green-600 text-white rounded w-16 h-12 flex items-center justify-center">
+                  <span className="text-xl font-bold">{score}</span>
+                  <span className="text-xs mt-1">/10</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Info className="bg-[#0F152B] text-white rounded-full w-3 h-3" />
+                <p className="text-xs">See how we calculate the score</p>
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <Info className="bg-[#0F152B] text-white rounded-full w-3 h-3" />
-              <p className="text-xs">See how we calculate the score</p>
-            </div>
+          </div>
+          <div className="px-4 pt-2">
+            <p className="text-xs text-gray-700">
+              <span className="font-medium">Disclaimer: </span>
+              This is not medical advice. Please consult a healthcare professional for any medical concerns.
+            </p>
           </div>
         </div>
-        <div className="px-4 pt-2">
-          <p className="text-xs text-gray-700">
-            <span className="font-medium">Disclaimer: </span>
-            This is not medical advice. Please consult a healthcare professional for any medical concerns.
-          </p>
-        </div>
       </div>
+
     </div>
   );
 };
