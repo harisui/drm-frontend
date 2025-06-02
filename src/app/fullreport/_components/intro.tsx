@@ -8,6 +8,17 @@ const Intro = ({ name, specialty, location, rating }: {
     location: string;
     rating: number;
 }) => {
+
+    console.log("location", location);
+    
+  const [city, state] = location
+    .split(',')
+    .map(part => part.trim())
+    .filter(Boolean); 
+
+  const displayLocation =
+    city && state ? `${city}, ${state}` : city || state || '';
+
     return (
         <div className="dr_intro">
             <h1>{name}</h1>
@@ -15,7 +26,7 @@ const Intro = ({ name, specialty, location, rating }: {
                 <p>{specialty}</p>
                 <div className="flex items-center gap-2">
                     <MapPin size={16} />
-                    <span>{location}</span>
+                    <span>{displayLocation}</span>
                 </div>
             </div>
         </div>
