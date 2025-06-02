@@ -7,7 +7,7 @@ export const paymentPageUrlRenderer = (doctor: any, apiSources:string, router:an
         '_spt_slug' : doctor?.specialty_url || doctor?.specialty || 'chiropractor',
         '_nme' : doctor?.name || 'Dr.',
         '_ct' : doctor?.city || '',
-        '_st' : (doctor?.state || '') == 'Unknown' ? '' : (doctor?.state || ''),
+        '_st': doctor?.state || '',
         '_rt' : doctor?.rating || 0,
         '_sr' : apiSources
     }

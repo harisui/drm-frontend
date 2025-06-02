@@ -49,7 +49,7 @@ const DoctorSearch = () => {
       const states = Array.from(
         new Set(
           doctors
-            .map((doctor) => doctor.state || "Unknown")
+            .map((doctor) => doctor.state || "")
             .filter(Boolean)
         )
       ).sort();
@@ -133,7 +133,7 @@ const DoctorSearch = () => {
       case 'uk':
         return 'United Kingdom';
       default:
-        return countrySlug?.toUpperCase() || 'Unknown';
+        return countrySlug?.toUpperCase() || '';
     }
   };
 
@@ -312,10 +312,13 @@ const DoctorSearch = () => {
                   <p className="font-semibold text-xl text-primary">
                     {Array.isArray(doctor.specialties)
                       ? doctor.specialties.join(', ')
-                      : doctor.specialty || 'N/A'}
+                      : doctor.specialty || ''}
                   </p>
                   <p className="text-sm text-primary">
-                    {doctor.city ? `${doctor.city}, ` : ''}{doctor.state || 'Unknown'} • {countryName}
+                      {doctor.city}
+                      {doctor.city && (doctor.state || countryName) ? ', ' : ''}
+                      {doctor.state || ''}
+                      {countryName ? ` • ${countryName}` : ''}
                   </p>
                 </div>
 

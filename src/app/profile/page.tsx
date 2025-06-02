@@ -175,7 +175,7 @@ const DoctorProfile = () => {
   const testimonials = report ? [
     report.positiveComments?.first ? {
       author: report.positiveComments.first.author || "Anonymous",
-      date: report.positiveComments.first.date || "Unknown date",
+      date: report.positiveComments.first.date || "",
       comment: stripHtml(report.positiveComments.first.comment) || "No comment available",
       imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile",
@@ -183,7 +183,7 @@ const DoctorProfile = () => {
     } : null,
     report.positiveComments?.second ? {
       author: report.positiveComments.second.author || "Anonymous",
-      date: report.positiveComments.second.date || "Unknown date",
+      date: report.positiveComments.second.date || "",
       comment: stripHtml(report.positiveComments.second.comment) || "No comment available",
       imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile",
@@ -191,7 +191,7 @@ const DoctorProfile = () => {
     } : null,
     report.negativeComment ? {
       author: report.negativeComment.author || "Anonymous",
-      date: report.negativeComment.date || "Unknown date",
+      date: report.negativeComment.date || "",
       comment: stripHtml(report.negativeComment.comment) || "No comment available",
       imgSrc: "/avatar.png",
       imgAlt: "Anonymous profile",

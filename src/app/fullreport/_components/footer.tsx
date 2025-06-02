@@ -67,7 +67,7 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
                                             {doctor.specialty || 'N/A'}
                                         </p>
                                         <p className="text-sm text-primary">
-                                            {doctor.city ? `${doctor.city}, ` : ''}{doctor.state || 'Unknown'}
+                                            {doctor.city ? `${doctor.city}, ` : ''}{doctor.state || ''}
                                         </p>
                                     </div>
 
