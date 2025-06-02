@@ -221,22 +221,19 @@ const FAQs = ({ params, report }: FAQsProps) => {
     }
   }, [isBotTyping]);
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!inputMessage.trim() || isBotTyping || !isConnected) return;
+  const sendMessage = (messageText: string) => {
+    if (!messageText.trim() || isBotTyping || !isConnected) return;
 
-    const userMessage = inputMessage;
-    const newUserMessage: Message = { role: 'user', content: userMessage };
+    const newUserMessage: Message = { role: 'user', content: messageText };
     
     setMessages(prev => [...prev, newUserMessage]);
-    setInputMessage('');
 
     // Send message through WebSocket
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({
         type: 'CHAT_MESSAGE',
         payload: {
-          message: userMessage,
+          message: messageText,
           conversationHistory: messages.map(msg => ({
             role: msg.role === 'user' ? 'user' : 'assistant',
             content: msg.content
@@ -249,10 +246,16 @@ const FAQs = ({ params, report }: FAQsProps) => {
     }
   };
 
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!inputMessage.trim()) return;
+
+    sendMessage(inputMessage);
+    setInputMessage('');
+  };
+
   const handleQuickQuestion = (question: string) => {
-    setInputMessage(question);
-    const input = document.querySelector('input[type="text"]') as HTMLInputElement;
-    input?.focus();
+    sendMessage(question);
   };
 
   const retryConnection = () => {
