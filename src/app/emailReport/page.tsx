@@ -1,12 +1,84 @@
 "use client"
-import React, { Suspense } from "react";
+import React, {Suspense, useEffect, useState} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import LoadingScreen from "@/components/ui/loader/page";
+import {
+  extractParamsFromUrl,
+  fetchReportData,
+  fetchSpecialtyData,
+  getSlugFromProfileLink
+} from "@/services/paramsHelper";
 
 const EmailReport = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   const doctorName = searchParams.get("_nme");
+  const [params, setParams] = useState<ReturnType<typeof extractParamsFromUrl>>({
+    _spt: "",
+    _spt_slug: "",
+    _nme: "",
+    _ct: "",
+    _st: "",
+    _rt: 0,
+    slug: "",
+    _sr: "",
+    lang: "en",
+  });
+
+  const [specialtyData, setSpecialtyData] = useState<any[]>([]);
+  const [report, setReport] = useState<null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Extract params once component mounts
+    setParams(extractParamsFromUrl());
+  }, []);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      if (!params._sr || !params.slug) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // 1. Fetch specialty data
+        const specialtyResults = await fetchSpecialtyData(params._spt_slug, params._sr);
+        setSpecialtyData(specialtyResults);
+
+        // Fallback to different specialty
+        if (specialtyResults.length === 0) {
+          const fallbackSpecialty = await fetchSpecialtyData("physician", params._sr);
+          setSpecialtyData(fallbackSpecialty);
+        }
+
+        // 2. Handle slug adjustments (specific to iwgc source)
+        let identifier = params.slug;
+        if (params._sr === "iwgc") {
+          const slugFromProfile = getSlugFromProfileLink(params.slug);
+          identifier = slugFromProfile || params.slug;
+        }
+
+        // 3. Fetch report data
+        const fetchedReport = await fetchReportData(identifier, params._sr);
+
+        // TODO Can be continoued in future, fetchedReport variable is useless for now
+
+      } catch (error) {
+        console.warn("Error:", error);
+        setError("Failed to fetch data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [params]);
+
+  if (isLoading) return <LoadingScreen />;
+
 
   const navigateToFullReport = () => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -16,6 +88,13 @@ const EmailReport = () => {
       console.warn("No identifier to navigate with");
     }
   };
+
+
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
 
   return (
       <section className="flex min-h-screen items-center justify-center bg-sky-100 p-6 sm:p-10 lg:p-20">

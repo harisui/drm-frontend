@@ -36,6 +36,7 @@ const DoctorSearch = () => {
         setDoctors([]);
         setSearchQuery("");
       }
+      clearAllFilters();
     }, 1500);
 
     return () => clearTimeout(debounceTimer);
@@ -72,7 +73,7 @@ const DoctorSearch = () => {
             .filter(Boolean)
         )
       ).sort();
-      
+
       const cities = Array.from(
         new Set(
           doctors
@@ -88,7 +89,7 @@ const DoctorSearch = () => {
             .filter(Boolean)
         )
       ).sort();
-      
+
       setAvailableStates(states as string[]);
       setAvailableCities(cities as string[]);
       setAvailableCountries(countries as string[]);
@@ -159,7 +160,7 @@ const DoctorSearch = () => {
     if (selectedCity) filters.push(selectedCity);
     if (selectedState) filters.push(selectedState);
     if (selectedCountry) filters.push(selectedCountry);
-    
+
     if (filters.length > 0) {
       return filters.join(', ');
     }
@@ -384,7 +385,7 @@ const DoctorSearch = () => {
             const score = doctor.rating ? (doctor.rating * 2).toFixed(1) : 0; // Convert 5-star to 10-point scale
 
             return (
-              <div 
+              <div
                 key={doctor.id || uuidv4()}
                 className="bg-[#ADD8FF] rounded-3xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 relative"
               >
@@ -435,25 +436,26 @@ const DoctorSearch = () => {
                     <div>
                       <p className='text-white'>Score</p>
                       <div className="flex items-center justify-center">
-                        <span className="text-4xl font-bold text-white">{score}</span>
+                        <span className="text-3xl font-bold text-white">{score}</span>
                         <span className="text-md mt-4 text-white">/10</span>
                       </div>
                     </div>
                   </div>
                   <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
                     <p className="text-primary">Reviews</p>
-                    <p className="text-4xl text-center font-bold text-primary">{doctor.reviewCount || 0}</p>
+                    <p className="text-3xl text-center font-bold text-primary">{doctor.reviewCount || 0}</p>
                   </div>
                   <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
                     <p className="text-primary text-xs">Experience</p>
-                    <p className="text-4xl text-center font-bold text-primary">10+</p>
+                    <p className="text-3xl text-center font-bold text-primary">10+</p>
                   </div>
                 </div>
 
                 {/* Generate Report Button */}
                 <button
+                    disabled={!Boolean(doctor.reviewCount || 0)}
                   onClick={() => navigateToPayment(doctor)}
-                  className="mt-4 w-full bg-[#14183E] text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors flex items-center justify-center gap-2"
+                  className="mt-4 w-full bg-[#14183E] disabled:bg-gray-400  text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors flex items-center justify-center gap-2"
                 >
                   Generate Report
                 </button>

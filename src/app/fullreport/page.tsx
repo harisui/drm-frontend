@@ -250,7 +250,7 @@ const FullReport = () => {
     };
 
     if (isLoading) {
-        return <LoadingScreen />;
+        return <LoadingScreen justLoader={true}/>;
     }
 
     return (
@@ -319,8 +319,8 @@ const FullReport = () => {
                     />
                 </div>
                 <div className="px-4 md:px-8">
-                    <FAQs  
-                        params={params} 
+                    <FAQs
+                        params={params}
                         report={report || { insights: [], summary: '', totalReviews: 0 }}
                     />
                 </div>

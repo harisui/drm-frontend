@@ -57,7 +57,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                                 {wishlistItems.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="flex items-start justify-between p-2 hover:bg-gray-50 rounded-lg"
+                                        className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg"
                                     >
                                         <div className="flex items-center space-x-3">
                                             <img
@@ -78,18 +78,19 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end space-y-2">
-                                            <button
-                                                onClick={() => onRemove(item.id)}
-                                                className="text-primary"
-                                            >
-                                                <X size={20} />
-                                            </button>
+                                        <div className="flex items-center gap-2 space-y-2">
+
                                             <button
                                                 onClick={() => paymentPageUrlRenderer(item, item.source, router)}
                                                 className="text-primary bg-[#ADD8FF] px-5 py-1 rounded-md text-sm flex items-center space-x-1"
                                             >
                                                 <span>Generate</span>
+                                            </button>
+                                            <button
+                                                onClick={() => onRemove(item.id)}
+                                                className="text-primary"
+                                            >
+                                                <X size={20} />
                                             </button>
                                         </div>
                                     </div>
@@ -102,17 +103,17 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                         )}
 
                         {/* Generate All Reports Button */}
-                        {wishlistItems.length > 0 && (
-                            <div className="pt-4 flex justify-center">
-                                <button
-                                    onClick={onGenerateAllReports}
-                                    className="bg-[#0F152B] text-white px-4 py-2 rounded text-sm"
-                                >
-                                    Generate All Reports
-                                </button>
-                            </div>
+                        {/*{wishlistItems.length > 0 && (*/}
+                        {/*    <div className="pt-4 flex justify-center">*/}
+                        {/*        <button*/}
+                        {/*            onClick={onGenerateAllReports}*/}
+                        {/*            className="bg-[#0F152B] text-white px-4 py-2 rounded text-sm"*/}
+                        {/*        >*/}
+                        {/*            Generate All Reports*/}
+                        {/*        </button>*/}
+                        {/*    </div>*/}
 
-                        )}
+                        {/*)}*/}
                     </div>
                 </div>
             )}

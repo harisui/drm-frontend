@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function LoadingScreen() {
+export default function LoadingScreen({justLoader = false}: {justLoader?: boolean}) {
   const [progress, setProgress] = useState(0);
 
   const steps = [
@@ -19,6 +19,21 @@ export default function LoadingScreen() {
 
     return () => clearInterval(interval);
   }, []);
+
+  if(justLoader)
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#EDF3FF] p-4">
+        <div className="w-48 h-48 mb-8 relative animate-spin">
+          <Image
+            src="/spinner.png"
+            alt="Loading spinner"
+            width={192}
+            height={192}
+            priority
+          />
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#EDF3FF] p-4">
