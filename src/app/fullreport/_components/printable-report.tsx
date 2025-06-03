@@ -172,12 +172,12 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
 
         <div className="p-2 mb-1 flex justify-center items-center  rounded-md">
           {hasData ? (
-            <div style={{ width: '500px', height: '300px' }}>
+            <div style={{ width: '300px', height: '100px' }}>
               <ChartContainer config={chartConfig}>
                 <AreaChart
                   data={chartData}
-                  width={700}
-                  height={180}
+                  width={400}
+                  height={100}
                   margin={{ top: 5, left: 5, right: 5, bottom: 5 }}
                 >
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
