@@ -15,6 +15,13 @@ const Summary = ({
   // Convert 5-star rating to 10-point scale
   const score = Math.round(rating * 2);
 
+  const getScoreColor = (score: number) => {
+    if (score >= 9) return 'bg-[#009246]';
+    if (score >= 7) return 'bg-[#009246]';
+    if (score >= 5) return 'bg-[#E95959]';
+    return 'bg-[#FDA15A]';
+  };
+
   return (
     <main className="bg-[#E5EEFB]">
       <div className="p-8">
@@ -28,7 +35,7 @@ const Summary = ({
               {doctorName}
             </h3>
             <div className="flex items-center gap-4">
-              <div className="bg-green-600 text-white rounded-lg w-48 h-20 flex items-center justify-center">
+              <div className={`${getScoreColor(score)} text-white rounded-lg w-48 h-20 flex items-center justify-center`}>
                 <span className="text-5xl font-bold">{score}</span>
                 <span className="mt-4">/10</span>
               </div>

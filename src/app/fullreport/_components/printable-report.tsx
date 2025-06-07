@@ -106,6 +106,13 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
   // Convert 5-star rating to 10-point scale for Summary
   const score = Math.round(params._rt * 2);
 
+  const getScoreColor = (score: number) => {
+    if (score >= 9) return 'bg-[#009246]';
+    if (score >= 7) return 'bg-[#009246]';
+    if (score >= 5) return 'bg-[#E95959]';
+    return 'bg-[#FDA15A]';
+  };
+
   return (
     <div
       className="printable-report bg-white text-xs m-0 p-0"
@@ -284,7 +291,7 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
                 {params._nme}
               </h3>
               <div className="flex items-center gap-2 mb-2">
-                <div className="bg-green-600 text-white rounded w-16 h-12 flex items-center justify-center">
+                <div className={`${getScoreColor(score)} text-white rounded w-16 h-12 flex items-center justify-center`}>
                   <span className="text-xl font-bold">{score}</span>
                   <span className="text-xs mt-1">/10</span>
                 </div>
