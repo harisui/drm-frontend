@@ -31,5 +31,6 @@ export interface Doctor {
         negative: number
         total?: number
     }>
-    totalReviews?: number
+    totalReviews?: number,
+    originalApiResponse: any[];
   }

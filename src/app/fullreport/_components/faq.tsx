@@ -17,6 +17,7 @@ interface FAQsProps {
     yearlyData?: any[];
     positiveComments?: any;
     negativeComment?: any;
+    originalApiResponse?: any[];
   };
 }
 
