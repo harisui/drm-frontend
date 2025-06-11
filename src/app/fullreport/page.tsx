@@ -122,7 +122,8 @@ const FullReport = () => {
                     negativeComment: reportData.negativeComment || null,
                     insights: reportData.insights || [],
                     summary: reportData.summary || "No summary available",
-                    locations: reportData.locations || []
+                    locations: reportData.locations || [],
+                    originalApiResponse: reportData.originalApiResponse || [],
                 };
 
                 setReport(processedReport);
