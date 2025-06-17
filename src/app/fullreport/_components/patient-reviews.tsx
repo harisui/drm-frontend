@@ -63,8 +63,8 @@ export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps
                         <ChartContainer config={chartConfig}>
                             <AreaChart
                                 data={chartData}
-                                width={350}
-                                height={200}
+                                width={150}
+                                height={100}
                                 margin={{ top: 10, left: 10, right: 10, bottom: 10 }}
                             >
                                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
