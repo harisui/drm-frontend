@@ -73,7 +73,7 @@ const Feedback = ({ positiveComments, negativeComment, rating }: FeedbackProps) 
     }
 
     return (
-        <div className="w-full p-4">
+        <div className="w-full p-4 px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-10">
                 {comments.map((comment, index) => (
                     <div

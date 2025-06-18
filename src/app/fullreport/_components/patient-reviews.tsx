@@ -48,16 +48,16 @@ export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps
     const hasData = chartData.some(item => item.positive > 0 || item.negative > 0)
 
     return (
-        <main>
+        <main className="px-8">
 
-            <div className="flex items-center px-8 space-x-4">
+            <div className="flex items-center space-x-4">
                 <h2 className="reports_heading">Patient Reviews Timeline</h2>
                 <span className="mb-3 bg-[#4da6ff] text-white text-xs font-semibold px-4 py-3 rounded-full flex items-center justify-center leading-none">
                     {totalReviews} reviews
                 </span>
             </div>
 
-            <Card className="mx-7  w-1/2">
+            <Card className="w-full">
                 <CardContent className="p-4">
                     {hasData ? (
                         <ChartContainer config={chartConfig}>
