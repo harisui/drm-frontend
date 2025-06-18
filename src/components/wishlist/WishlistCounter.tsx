@@ -60,11 +60,11 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                                         className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg"
                                     >
                                         <div className="flex items-center space-x-3">
-                                            <img
-                                                src={item.imagePath || "/placeholder.svg"}
+                                            {/* <img
+                                                src={item.imagePath || "/placeholder.png"}
                                                 alt={item.name}
                                                 className="w-10 h-10 rounded-lg object-cover"
-                                            />
+                                            /> */}
                                             <div>
                                                 <p className="font-medium">{item.name}</p>
                                                 <p className="text-sm text-gray-500">{item.specialty}</p>
