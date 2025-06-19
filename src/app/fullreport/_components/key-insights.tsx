@@ -23,11 +23,12 @@ const KeyInsights = ({ insights }: { insights: string[] }) => {
                     const cleanedInsight = insight.replace(/^\d+\.\s*/, '');
 
                     return (
-                        <div key={index} className="border border-[#ADD8FF] rounded-lg p-6">
-                            <div className="flex items-start mb-3 gap-2">
-                              
+                    <div key={index} className="border border-[#ADD8FF] rounded-lg p-6">
+                    <div className="flex items-center mb-3 gap-2">
+                        <Circle className="w-4 h-4 flex-shrink-0 fill-black" />
+                        <h3 className="text-xl font-semibold">Lorem Ipsum</h3>
+                    </div>
                                 <h3 className="text-xl font-semibold">{cleanedInsight}</h3>
-                            </div>
                         </div>
                     );
                 })}
