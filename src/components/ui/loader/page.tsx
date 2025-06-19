@@ -37,7 +37,7 @@ export default function LoadingScreen({justLoader = false}: {justLoader?: boolea
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#EDF3FF] p-4">
-      <div className="w-48 h-48 mb-8 relative animate-spin">
+      <div className="w-48 h-48 mb-8 relative animate-[spin_1s_linear_infinite_reverse]">
         <Image
           src="/spinner.png"
           alt="Loading spinner"

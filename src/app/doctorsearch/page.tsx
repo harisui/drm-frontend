@@ -360,7 +360,7 @@ const DoctorSearch = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1440px] mx-auto">
           {isLoading && (
             <div className="col-span-full flex justify-center items-center">
-              <div className="w-32 h-32 animate-spin">
+              <div className="w-32 h-32 animate-[spin_1s_linear_infinite_reverse]">
                 <Image
                   src="/spinner.png"
                   alt="Loading spinner"
