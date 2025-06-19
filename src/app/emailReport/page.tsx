@@ -13,6 +13,8 @@ const EmailReport = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [isChecked, setIsChecked] = useState(false);
+  const [email, setEmail] = useState("");
 
   const doctorName = searchParams.get("_nme");
   const [params, setParams] = useState<ReturnType<typeof extractParamsFromUrl>>({
@@ -89,7 +91,8 @@ const EmailReport = () => {
     }
   };
 
-
+  // Check if email is valid and checkbox is checked
+  const isFormValid = email.trim() !== "" && email.includes("@") && isChecked;
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -108,26 +111,48 @@ const EmailReport = () => {
             </p>
           </div>
 
-          <form className="flex w-full flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg sm:flex-row sm:items-stretch sm:gap-4 sm:p-6 md:rounded-3xl">
-            <div className="flex-1">
-              <label htmlFor="emailInput" className="sr-only">Email address</label>
-              <input
+          <div className="space-y-3">
+            {/* Email Form */}
+            <form className="flex w-full flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg sm:flex-row sm:items-stretch sm:gap-4 sm:p-6 md:rounded-3xl">
+              <div className="flex-1">
+                <label htmlFor="emailInput" className="sr-only">Email address</label>
+                <input
                   type="email"
                   id="emailInput"
                   placeholder="Enter your email to get the report"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="h-full w-full py-4 text-lg placeholder-gray-400 focus:outline-none sm:py-5 sm:text-xl md:py-6"
                   aria-label="Enter your email address to receive the report"
-              />
-            </div>
+                />
+              </div>
 
-            <button
+              <button
                 type="button"
                 onClick={() => navigateToFullReport()}
-                className="w-full rounded-xl bg-slate-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 sm:w-auto sm:px-8 sm:py-5 md:py-6 md:text-xl"
-            >
-              Get Report
-            </button>
-          </form>
+                disabled={!isFormValid}
+                className={`w-full rounded-xl bg-slate-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 sm:w-auto sm:px-8 sm:py-5 md:py-6 md:text-xl ${
+                  !isFormValid ? 'opacity-50 cursor-not-allowed hover:bg-slate-900' : ''
+                }`}
+              >
+                Get Report
+              </button>
+            </form>
+
+            {/* GDPR checkbox placed right below the form */}
+            <div className="flex items-center gap-3 text-base text-black px-2">
+              <input
+                type="checkbox"
+                id="gdprConsent"
+                className="w-5 h-5 accent-slate-900 flex-shrink-0"
+                checked={isChecked}
+                onChange={() => setIsChecked(!isChecked)}
+              />
+              <label htmlFor="gdprConsent" className="leading-snug flex-1">
+                I agree that my email will be stored and used to contact and provide me with the doctor report.
+              </label>
+            </div>
+          </div>
         </div>
       </section>
   );
