@@ -40,10 +40,15 @@ const Summary = ({
                 <span className="mt-4">/10</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 mt-2">
-              <Info className="bg-[#0F152B] text-white rounded-full w-4 h-4 text-primary" />
-              <p className="text-sm text-primary">See how we calculate the score</p>
-            </div>
+              <div className="relative group flex items-center gap-1 mt-2 cursor-pointer">
+                <Info className="bg-[#0F152B] text-white rounded-full w-4 h-4 text-primary" />
+                <p className="text-sm text-primary">See how we calculate the score</p>
+
+                {/* Tooltip */}
+                <div className="absolute left-0 top-8 z-10 hidden w-64 bg-white text-sm text-gray-700 border border-gray-300 rounded-md p-2 shadow-lg group-hover:block">
+                  33% of the score is based on the share of positive reviews; 67% on the doctor’s average rating across top platforms
+                </div>
+              </div>
           </div>
         </div>
         <div className="mt-2 px-8 py-4">
