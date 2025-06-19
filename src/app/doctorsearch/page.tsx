@@ -25,6 +25,7 @@ const DoctorSearch = () => {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableCountries, setAvailableCountries] = useState<string[]>([]);
   const [showLocationFilter, setShowLocationFilter] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -189,20 +190,20 @@ const DoctorSearch = () => {
         <div className="mb-8 lg:mb-12">
           <div className="max-w-[1100px] mx-auto">
             <div className='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'>
-              {/* Text Content */}
-              <div className="order-2 md:order-1">
-                <div className="text-left mb-1">
+              {/* Text Content - Slides from left to center */}
+              <div className={`order-2 md:order-1 transition-all duration-500 ease-in-out ${isSearchFocused ? 'md:col-span-2' : ''}`}>
+                <div className={`text-left mb-1 transition-all duration-300 ${isSearchFocused ? 'text-center' : ''}`}>
                   <h1 className="text-2xl font-semibold mb-2 lg:text-5xl lg:mb-4">
                     Hello <span className="inline-block animate-wave">👋</span>
                   </h1>
                   <h2 className="text-3xl font-bold lg:text-6xl">Find your doctor</h2>
                 </div>
 
-                {/* Search Input */}
-                <div className="relative mt-6">
+                {/* Search Input - Slides and expands */}
+                <div className={`relative mt-6 group transition-all duration-500 ${isSearchFocused ? 'mx-auto w-full max-w-2xl' : 'w-full'}`}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400"
+                    className={`absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 transition-all duration-300 ${isSearchFocused ? 'left-6 h-7 w-7' : ''}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -213,33 +214,41 @@ const DoctorSearch = () => {
                   <input
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
                     type="text"
                     placeholder="Search doctor by name or department"
-                    className="w-full rounded-lg bg-white py-3 pl-12 pr-4 text-base shadow-lg outline-none ring-1 ring-gray-100 lg:py-4 lg:text-lg"
+                    className={`w-full rounded-lg bg-white py-3 pl-12 pr-4 text-base shadow-lg outline-none ring-1 ring-gray-100 lg:py-4 lg:text-lg
+                      transition-all duration-500 ease-in-out
+                      ${isSearchFocused ? 
+                        'scale-105 shadow-xl ring-2 ring-blue-400 pl-14' : 
+                        ''}`}
                   />
                 </div>
               </div>
 
-              {/* Image */}
-              <div className="order-1 md:order-2 relative w-full h-64 md:h-80">
-                <Image
-                  src="/assets/reports.png"
-                  alt="Doctor search illustration showing medical reports"
-                  fill
-                  className="object-contain"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/placeholder-doctor.png";
-                  }}
-                />
-              </div>
+              {/* Image - Hidden when focused */}
+              {!isSearchFocused && (
+                <div className="order-1 md:order-2 relative w-full h-64 md:h-80 transition-opacity duration-300">
+                  <Image
+                    src="/assets/reports.png"
+                    alt="Doctor search illustration showing medical reports"
+                    fill
+                    className="object-contain"
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder-doctor.png";
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Location Filter */}
-        {(availableStates.length > 0 || availableCities.length > 0 || availableCountries.length > 0) && (
+        {(filteredDoctors.length > 0) && (
           <div className="flex w-full max-w-[1440px] mx-auto mb-4">
             <div className="ml-auto relative">
               <button
