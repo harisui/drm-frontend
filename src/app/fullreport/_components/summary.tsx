@@ -13,7 +13,7 @@ const Summary = ({
   console.log("rating:" , rating);
   
   // Convert 5-star rating to 10-point scale
-  const score = Math.round(rating * 2);
+  const score = rating ? parseFloat((rating * 2).toFixed(1)) : 0;
 
   const getScoreColor = (score: number) => {
     if (score >= 9) return 'bg-[#009246]';
