@@ -107,7 +107,7 @@ const DoctorSearch = () => {
     
     try {
       const response = await fetch(
-          `${API_BASE_URL}/doctors/search?query=''`
+          `${API_BASE_URL}/doctors/search?query=john`
       );
       const data = await response.json();
 
