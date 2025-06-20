@@ -30,6 +30,11 @@ const DoctorSearch = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
+    // Fetch default doctors on initial load
+    fetchDefaultDoctors();
+  }, []);
+
+  useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (searchText.trim()) {
         setSearchQuery(searchText);
@@ -96,6 +101,27 @@ const DoctorSearch = () => {
       setAvailableCountries(countries as string[]);
     }
   }, [doctors]);
+
+  async function fetchDefaultDoctors() {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(
+          `${API_BASE_URL}/doctors/search?query=''`
+      );
+      const data = await response.json();
+
+      if (data.success && data.results?.length > 0) {
+        setDoctors(data.results);
+        setApiSources(data.source);
+      }
+    } catch (err) {
+      console.error("Default doctors fetch failed:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   async function fetchDoctors(query: string) {
     setIsLoading(true);
