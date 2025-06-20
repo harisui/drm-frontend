@@ -252,9 +252,9 @@ const DoctorSearch = () => {
                 </div>
               </div>
 
-              {/* Image - Hidden when focused */}
+              {/* Image - Hidden on mobile, visible on medium screens and up, hidden when focused */}
               {!isSearchFocused && (
-                <div className="order-1 md:order-2 relative w-full h-64 md:h-80 transition-opacity duration-300">
+                <div className="hidden md:block order-1 md:order-2 relative w-full h-64 md:h-80 transition-opacity duration-300">
                   <Image
                     src="/assets/reports.png"
                     alt="Doctor search illustration showing medical reports"
