@@ -39,7 +39,6 @@ const DoctorSearch = () => {
       if (searchText.trim()) {
         setSearchQuery(searchText);
       } else {
-        setDoctors([]);
         setSearchQuery("");
       }
       clearAllFilters();
