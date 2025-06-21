@@ -57,58 +57,55 @@ export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps
                 </span>
             </div>
 
-            <Card className="w-full !h-1/2">
-                <CardContent className="p-4 h-full">
+            <Card className="max-w-4/5 max-h-1/2 !border-0">
+                <CardContent className="p-4">
                     {hasData ? (
-                        <ChartContainer config={chartConfig} className="h-full w-full">
-                            <div className="h-full w-full">
-                                <AreaChart
-                                    data={chartData}
-                                    width={undefined} // Dynamically adjust the width
-                                    height={undefined} // Dynamically adjust the height
-                                    className="w-full h-full"
-                                    margin={{ top: 10, left: 10, right: 10, bottom: 10 }}
-                                >
-                                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                                    <XAxis
-                                        dataKey="year"
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tickMargin={8}
-                                        fontSize={12}
-                                    />
-                                    <ChartTooltip
-                                        cursor={false}
-                                        content={<ChartTooltipContent />}
-                                    />
-                                    <defs>
-                                        <linearGradient id="fillPositive" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#ADD8FF" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#ADD8FF" stopOpacity={0.1} />
-                                        </linearGradient>
-                                        <linearGradient id="fillNegative" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#F4A79D" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#F4A79D" stopOpacity={0.1} />
-                                        </linearGradient>
-                                    </defs>
-                                    <Area
-                                        dataKey="negative"
-                                        type="natural"
-                                        fill="url(#fillNegative)"
-                                        fillOpacity={0.4}
-                                        stroke="#F4A79D"
-                                        strokeWidth={1.5}
-                                    />
-                                    <Area
-                                        dataKey="positive"
-                                        type="natural"
-                                        fill="url(#fillPositive)"
-                                        fillOpacity={0.4}
-                                        stroke="#ADD8FF"
-                                        strokeWidth={1.5}
-                                    />
-                                </AreaChart>
-                            </div>
+                        <ChartContainer config={chartConfig}>
+                            <AreaChart
+                                data={chartData}
+                                width={150}
+                                height={100}
+                                margin={{ top: 10, left: 10, right: 10, bottom: 10 }}
+                            >
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                                <XAxis
+                                    dataKey="year"
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickMargin={8}
+                                    fontSize={12}
+                                />
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent />}
+                                />
+                                <defs>
+                                    <linearGradient id="fillPositive" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#ADD8FF" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#ADD8FF" stopOpacity={0.1} />
+                                    </linearGradient>
+                                    <linearGradient id="fillNegative" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#F4A79D" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#F4A79D" stopOpacity={0.1} />
+                                    </linearGradient>
+                                </defs>
+                                <Area
+                                    dataKey="negative"
+                                    type="natural"
+                                    fill="url(#fillNegative)"
+                                    fillOpacity={0.4}
+                                    stroke="#F4A79D"
+                                    strokeWidth={1.5}
+                                />
+                                <Area
+                                    dataKey="positive"
+                                    type="natural"
+                                    fill="url(#fillPositive)"
+                                    fillOpacity={0.4}
+                                    stroke="#ADD8FF"
+                                    strokeWidth={1.5}
+                                />
+                            </AreaChart>
                         </ChartContainer>
                     ) : (
                         <div className="text-center text-gray-500 py-4">
