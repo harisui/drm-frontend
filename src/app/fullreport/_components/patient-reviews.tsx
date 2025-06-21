@@ -57,7 +57,7 @@ export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps
                 </span>
             </div>
 
-            <Card className="max-w-4/5 max-h-1/2 !border-0">
+            <Card className="w-4/5 !h-1/2 !border-0">
                 <CardContent className="p-4">
                     {hasData ? (
                         <ChartContainer config={chartConfig}>
