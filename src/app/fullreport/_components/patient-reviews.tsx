@@ -57,14 +57,16 @@ export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps
                 </span>
             </div>
 
-            <Card className="w-4/5 !h-1/2 !border-0">
+            <Card className="w-auto !h-1/2">
                 <CardContent className="p-4">
                     {hasData ? (
-                        <ChartContainer config={chartConfig}>
+                        <div  style={{ height: '300px' }}>
+                            <ChartContainer className={"!h-full"} config={chartConfig}>
                             <AreaChart
                                 data={chartData}
-                                width={150}
-                                height={100}
+                                style={{ width: '100%', height: '300px' }}
+                                // width={150}
+                                // height={500}
                                 margin={{ top: 10, left: 10, right: 10, bottom: 10 }}
                             >
                                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -107,6 +109,7 @@ export function PatientReviews({ yearlyData, totalReviews }: PatientReviewsProps
                                 />
                             </AreaChart>
                         </ChartContainer>
+                        </div>
                     ) : (
                         <div className="text-center text-gray-500 py-4">
                             No review data available
