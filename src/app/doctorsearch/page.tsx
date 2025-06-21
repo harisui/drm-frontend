@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Doctor } from '@/types';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,6 +26,8 @@ const DoctorSearch = () => {
   const [availableCountries, setAvailableCountries] = useState<string[]>([]);
   const [showLocationFilter, setShowLocationFilter] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const buttonRefs = useRef<Record<string, HTMLButtonElement>>({});
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -208,24 +210,38 @@ const DoctorSearch = () => {
     }
   };
 
+  // Handle the search focus without layout shifts
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  // Handle search blur with a slight delay to ensure button clicks are processed
+  const handleSearchBlur = () => {
+    setTimeout(() => {
+      if (!document.activeElement || !searchInputRef.current?.contains(document.activeElement)) {
+        setIsSearchFocused(false);
+      }
+    }, 100);
+  };
+
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8">
       <div className="mx-auto mt-28">
         {/* Header Section */}
         <div className="mb-8 lg:mb-12">
           <div className="max-w-[1100px] mx-auto">
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'>
-              {/* Text Content - Slides from left to center */}
-              <div className={`order-2 md:order-1 transition-all duration-500 ease-in-out ${isSearchFocused ? 'md:col-span-2' : ''}`}>
-                <div className={`text-left mb-1 transition-all duration-300 ${isSearchFocused ? 'text-center' : ''}`}>
+            <div className='flex flex-col md:flex-row gap-8 items-center'>
+              {/* Text Content - No layout shifts */}
+              <div className="flex-1 transition-all duration-500 ease-in-out">
+                <div className="text-left mb-1">
                   <h1 className="text-2xl font-semibold mb-2 lg:text-5xl lg:mb-4">
                     Hello <span className="inline-block animate-wave">👋</span>
                   </h1>
                   <h2 className="text-3xl font-bold lg:text-6xl">Find your doctor</h2>
                 </div>
 
-                {/* Search Input - Slides and expands */}
-                <div className={`relative mt-6 group transition-all duration-500 ${isSearchFocused ? 'mx-auto w-full max-w-2xl' : 'w-full'}`}>
+                {/* Search Input - Consistent width */}
+                <div className="relative mt-6 group transition-all duration-500 w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 transition-all duration-300 ${isSearchFocused ? 'left-6 h-7 w-7' : ''}`}
@@ -237,10 +253,11 @@ const DoctorSearch = () => {
                     <path d="m21 21-4.3-4.3" />
                   </svg>
                   <input
+                    ref={searchInputRef}
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
+                    onFocus={handleSearchFocus}
+                    onBlur={handleSearchBlur}
                     type="text"
                     placeholder="Search doctor by name or department"
                     className={`w-full rounded-lg bg-white py-3 pl-12 pr-4 text-base shadow-lg outline-none ring-1 ring-gray-100 lg:py-4 lg:text-lg
@@ -252,20 +269,22 @@ const DoctorSearch = () => {
                 </div>
               </div>
 
-              {/* Image - Hidden on mobile, visible on medium screens and up, hidden when focused */}
+              {/* Image - Hidden when search is focused */}
               {!isSearchFocused && (
-                <div className="hidden md:block order-1 md:order-2 relative w-full h-64 md:h-80 transition-opacity duration-300">
-                  <Image
-                    src="/assets/reports.png"
-                    alt="Doctor search illustration showing medical reports"
-                    fill
-                    className="object-contain"
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder-doctor.png";
-                    }}
-                  />
+                <div className="hidden md:block flex-shrink-0 w-1/2 max-w-md transition-opacity duration-300">
+                  <div className="relative w-full h-64 md:h-80">
+                    <Image
+                      src="/assets/reports.png"
+                      alt="Doctor search illustration showing medical reports"
+                      fill
+                      className="object-contain"
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/placeholder-doctor.png";
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -487,9 +506,13 @@ const DoctorSearch = () => {
 
                 {/* Generate Report Button */}
                 <button
-                    disabled={!Boolean(doctor.reviewCount || 0)}
-                  onClick={() => navigateToPayment(doctor)}
-                  className="mt-4 w-full bg-[#14183E] disabled:bg-gray-400  text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors flex items-center justify-center gap-2"
+                  disabled={!Boolean(doctor.reviewCount || 0)}
+                  onClick={(e) => {
+                    // Prevent default to handle any focus issues
+                    e.preventDefault();
+                    navigateToPayment(doctor);
+                  }}
+                  className="mt-4 w-full bg-[#14183E] disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors flex items-center justify-center gap-2"
                 >
                   Generate Report
                 </button>
