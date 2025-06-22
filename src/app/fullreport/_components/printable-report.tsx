@@ -1,7 +1,7 @@
 "use client"
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { MapPin, Star } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer } from "recharts";
 import {
   InformationCircleIcon
 } from "@heroicons/react/24/solid";
@@ -22,7 +22,10 @@ interface PrintableReportProps {
     _rt: number;
   };
   report: {
-    insights?: string[];
+     insights?: {
+     title: string;
+     text: string;
+  }[];
     yearlyData?: Array<{
       year: string;
       positive: number;
@@ -40,6 +43,17 @@ interface PrintableReportProps {
 }
 
 const PrintableReport = ({ params, report }: PrintableReportProps) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  // Force chart re-render after component mounts
+  useEffect(() => {
+    if (chartRef.current) {
+      // Trigger a resize event to ensure the chart renders properly
+      const resizeEvent = new Event('resize');
+      window.dispatchEvent(resizeEvent);
+    }
+  }, [report?.yearlyData]);
+
   // Chart configuration
   const chartConfig = {
     positive: {
@@ -144,16 +158,14 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
 
       {/* Key Insights Section */}
       <div className="px-4 py-3 flex-shrink-0">
-        <h2 className="text-sm font-bold mb-2">Key Insights</h2>
+        <h2 className="text-sm font-bold mb-4">Key Insights</h2>
         <div className="grid grid-cols-3 gap-3">
-          {report?.insights?.map((insight, index) => {
-            const cleanedInsight = insight.replace(/^\d+\.\s*/, '');
-            return (
-              <div key={index} className="border border-[#ADD8FF] rounded p-2">
-                <h3 className="text-xs font-medium leading-tight">{cleanedInsight}</h3>
-              </div>
-            );
-          })}
+          {report?.insights?.map((insight, index) => (
+            <div key={index} className="border border-[#ADD8FF] rounded p-2">
+              <h3 className="text-xs font-bold text-[#005599] mb-1">{insight.title}</h3>
+              <p className="text-xs font-medium leading-tight">{insight.text}</p>
+            </div>
+          ))}
 
           {(!report?.insights || report.insights.length === 0) && (
             <div className="border border-[#ADD8FF] rounded p-2 col-span-3">
@@ -171,20 +183,24 @@ const PrintableReport = ({ params, report }: PrintableReportProps) => {
         <div className="flex items-center gap-2 mb-2">
           <h2 className="text-sm font-bold">Patient Reviews Timeline</h2>
           {report?.totalReviews && (
-            <p className="   text-xs px-2 py-1 pt-5 rounded-full font-bold flex items-center justify-center mt-1">
+            <p className="text-xs px-2 py-1 pt-5 rounded-full font-bold flex items-center justify-center mt-1">
               ({report.totalReviews} reviews)
             </p>
           )}
         </div>
 
-        <div className="p-2 mb-1 flex justify-center items-center  rounded-md">
+        <div 
+          ref={chartRef}
+          className="p-2 mb-1 flex justify-center items-center rounded-md"
+          style={{ width: '100%', height: '180px' }}
+        >
           {hasData ? (
-            <div style={{ width: '600px', height: '300px' }}>
-              <ChartContainer config={chartConfig}>
+            <div style={{ width: '100%', height: '180px' }}>
+              <ChartContainer config={chartConfig} className="w-full h-full">
                 <AreaChart
                   data={chartData}
-                  width={700}
-                  height={180}
+                  width={600}
+                  height={160}
                   margin={{ top: 5, left: 5, right: 5, bottom: 5 }}
                 >
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />

@@ -14,6 +14,11 @@ export interface Doctor {
     specialty_url: string;
     specialties?: string[];
   }
+
+    interface Insight {
+    title: string;
+    text: string;
+  }
   
   export interface Report {
     success: boolean;
@@ -22,7 +27,7 @@ export interface Doctor {
       second: {author?: string, comment: string; date: string };
     };
     negativeComment: {author?: string, comment: string; date: string };
-    insights: string[];
+    insights: Insight[];
     summary: string;
     locations?: string[];
         yearlyData?: Array<{

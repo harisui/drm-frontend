@@ -2,6 +2,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Search, Send, Circle } from "lucide-react";
 
+interface insight {
+  title: string;
+  text: string;
+}
 interface FAQsProps {
   params: {
     _spt: string;
@@ -11,7 +15,7 @@ interface FAQsProps {
     _rt: number;
   };
   report: {
-    insights?: string[];
+    insights?: insight[];
     summary?: string;
     totalReviews?: number;
     yearlyData?: any[];

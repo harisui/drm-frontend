@@ -209,6 +209,7 @@ const FullReport = () => {
             tempDiv.style.margin = '0';
             tempDiv.style.padding = '0';
             tempDiv.style.boxSizing = 'border-box';
+            tempDiv.style.backgroundColor = '#ffffff';
 
             document.body.appendChild(tempDiv);
 
@@ -216,37 +217,99 @@ const FullReport = () => {
             const root = createRoot(tempDiv);
             root.render(<PrintableReport params={params} report={report} />);
 
-            // Wait for rendering to complete
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            // Wait for initial rendering
+            await new Promise<void>(resolve => setTimeout(() => resolve(), 1000));
 
-            const pdf = new jsPDF('p', 'mm', 'a4'); // Use mm units for better precision
+            // Wait specifically for SVG elements (charts) to be ready
+            const waitForCharts = (): Promise<void> => {
+                return new Promise<void>((resolve) => {
+                    const checkCharts = () => {
+                        const svgElements = tempDiv.querySelectorAll('svg');
+                        const hasCharts = svgElements.length > 0;
+                        
+                        if (hasCharts) {
+                            // Check if all SVG elements have actual content
+                            const allChartsReady = Array.from(svgElements).every(svg => {
+                                const paths = svg.querySelectorAll('path, rect, circle, line');
+                                return paths.length > 0;
+                            });
+                            
+                            if (allChartsReady) {
+                                resolve();
+                                return;
+                            }
+                        }
+                        
+                        // If no charts or not ready, wait a bit more
+                        setTimeout(checkCharts, 500);
+                    };
+                    
+                    checkCharts();
+                    
+                    // Failsafe: resolve after 10 seconds max
+                    setTimeout(() => resolve(), 10000);
+                });
+            };
+
+            await waitForCharts();
+
+            // Additional wait to ensure everything is stable
+            await new Promise<void>(resolve => setTimeout(() => resolve(), 1000));
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
             const options = {
                 scale: 2,
                 useCORS: true,
-                width: 794, // A4 width in pixels at 96 DPI (210mm)
-                height: 1123, // A4 height in pixels at 96 DPI (297mm)
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                width: 794,
+                height: 1123,
                 windowWidth: 794,
                 windowHeight: 1123,
-                logging: false,
-                allowTaint: true,
-                backgroundColor: '#ffffff'
+                logging: true, // Enable logging to debug
+                // Force rendering of SVG elements
+                onrendered: function(canvas) {
+                    console.log('Canvas rendered successfully');
+                },
+                // Handle SVG elements specifically
+                ignoreElements: function(element) {
+                    // Don't ignore any elements
+                    return false;
+                }
             };
 
+            console.log('Starting html2canvas...');
             const canvas = await html2canvas(tempDiv, options);
+            console.log('html2canvas completed');
 
             // Clean up
             root.unmount();
             document.body.removeChild(tempDiv);
 
+            if (canvas.width === 0 || canvas.height === 0) {
+                throw new Error('Canvas has zero dimensions');
+            }
+
             const imgData = canvas.toDataURL('image/png', 1.0);
 
-            // Add image to PDF with exact A4 dimensions (no margins)
+            // Add image to PDF with exact A4 dimensions
             pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
 
             pdf.save(`${params._nme.replace(/\s+/g, '_')}_Report.pdf`);
+            
+            console.log('PDF generated successfully');
+            
         } catch (error) {
             console.error('Error generating PDF:', error);
-            alert('Failed to generate PDF. Please try again.');
+            
+            // More specific error handling
+            if (error.message.includes('Canvas')) {
+                alert('Failed to capture the report content. Please try again.');
+            } else if (error.message.includes('SVG')) {
+                alert('Failed to render charts. Please try again.');
+            } else {
+                alert('Failed to generate PDF. Please try again.');
+            }
         }
     };
 
