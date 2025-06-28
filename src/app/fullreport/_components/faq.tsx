@@ -48,7 +48,8 @@ const FAQs = ({ params, report }: FAQsProps) => {
   const sampleFAQs = [
     "What is the doctor's specialization?",
     "What are patients saying?",
-    "What is the doctor's rating?"
+    "What is the doctor's rating?",
+    "Is there anything to note about the doctor?"
   ];
 
   const getWebSocketUrl = () => {
@@ -269,6 +270,57 @@ const FAQs = ({ params, report }: FAQsProps) => {
     connectWebSocket();
   };
 
+  // Function to convert markdown-style formatting to HTML
+  const formatMessage = (text: string) => {
+    if (!text) return '';
+    
+    // Convert **text** to <strong>text</strong>
+    let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert *text* to <em>text</em> (italic)
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Convert bullet points • to proper list items
+    formatted = formatted.replace(/^•\s*(.*)$/gm, '<li>$1</li>');
+    
+    // Convert numbered lists
+    formatted = formatted.replace(/^\d+\.\s*(.*)$/gm, '<li>$1</li>');
+    
+    // Wrap lists in <ul> tags - using a different approach without 's' flag
+    if (formatted.includes('<li>')) {
+      const lines = formatted.split('\n');
+      let inList = false;
+      let result = '';
+      
+      for (const line of lines) {
+        if (line.includes('<li>')) {
+          if (!inList) {
+            result += '<ul>';
+            inList = true;
+          }
+          result += line + '\n';
+        } else {
+          if (inList) {
+            result += '</ul>';
+            inList = false;
+          }
+          result += line + '\n';
+        }
+      }
+      
+      if (inList) {
+        result += '</ul>';
+      }
+      
+      formatted = result;
+    }
+    
+    // Convert line breaks to <br> tags
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    return formatted;
+  };
+
   return (
     <main className="max-w-4xl mx-auto p-6">
       <h1 className="text-primary text-4xl text-center font-semibold mb-8">
@@ -306,9 +358,10 @@ const FAQs = ({ params, report }: FAQsProps) => {
                 ? 'bg-blue-600 text-white rounded-br-none' 
                 : 'bg-gray-50 text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
             }`}>
-              <div className="whitespace-pre-line">
-                {msg.content}
-              </div>
+              <div 
+                className="whitespace-pre-line"
+                dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
+              />
               {msg.timestamp && (
                 <div className="text-xs mt-2 opacity-70">
                   {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
