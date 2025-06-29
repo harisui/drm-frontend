@@ -321,6 +321,13 @@ const FAQs = ({ params, report }: FAQsProps) => {
     return formatted;
   };
 
+  const replaceObjectObjectWithKeyPoints = (msg: string) => {
+    if (!msg.includes('[object Object]')) return msg;
+    if (!report.insights) return msg;
+    const keyPointsText = report.insights.map(i => `• ${i.text}`).join('\n');
+    return msg.replace(/\[object Object\](\n)?/g, keyPointsText + '\n');
+  };
+
   return (
     <main className="max-w-4xl mx-auto p-6">
       <h1 className="text-primary text-4xl text-center font-semibold mb-8">
@@ -360,7 +367,7 @@ const FAQs = ({ params, report }: FAQsProps) => {
             }`}>
               <div 
                 className="whitespace-pre-line"
-                dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
+                dangerouslySetInnerHTML={{ __html: formatMessage(replaceObjectObjectWithKeyPoints(msg.content)) }}
               />
               {msg.timestamp && (
                 <div className="text-xs mt-2 opacity-70">
