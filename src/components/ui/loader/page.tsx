@@ -25,7 +25,7 @@ export default function LoadingScreen({justLoader = false}: {justLoader?: boolea
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#EDF3FF] p-4">
         <div className="w-48 h-48 mb-8 relative animate-spin">
           <Image
-            src="/spinner.png"
+            src="/spinner-rev.png"
             alt="Loading spinner"
             width={192}
             height={192}
@@ -37,9 +37,9 @@ export default function LoadingScreen({justLoader = false}: {justLoader?: boolea
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#EDF3FF] p-4">
-      <div className="w-48 h-48 mb-8 relative animate-[spin_1s_linear_infinite_reverse]">
+      <div className="w-48 h-48 mb-8 relative animate-spin">
         <Image
-          src="/spinner.png"
+          src="/spinner-rev.png"
           alt="Loading spinner"
           width={192}
           height={192}
@@ -51,7 +51,7 @@ export default function LoadingScreen({justLoader = false}: {justLoader?: boolea
         {steps.map((step, index) => (
           <div
             key={index}
-            className={`flex items-center justify-center gap-2 transition-all duration-500 ${
+            className={`flex items-center sm:justify-start md:justify-center gap-2 transition-all duration-500 ${
               index < progress ? "text-black" : "text-gray-300"
             }`}
           >

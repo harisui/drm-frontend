@@ -40,7 +40,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
             {/* Wishlist Dropdown */}
             {isOpen && (
                 <div
-                    className="absolute scroll-thin max-h-[300px] overflow-y-auto right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    className="md:w-96 max-sm:fixed max-sm:w-full md:absolute scroll-thin max-h-[300px] overflow-y-auto right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <div className="p-4">
                         {/* <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-semibold">Wishlist ({count})</h3>

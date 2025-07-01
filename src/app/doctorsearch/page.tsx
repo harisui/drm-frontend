@@ -106,7 +106,7 @@ const DoctorSearch = () => {
   async function fetchDefaultDoctors() {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(
           `${API_BASE_URL}/doctors/search?query=john`
@@ -237,8 +237,29 @@ const DoctorSearch = () => {
                   <h1 className="text-2xl font-semibold mb-2 lg:text-5xl lg:mb-4">
                     Hello <span className="inline-block animate-wave">👋</span>
                   </h1>
-                  <h2 className="text-3xl font-bold lg:text-6xl">Find your doctor</h2>
-                </div>
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-3xl font-bold lg:text-6xl">Find your doctor</h2>
+                    {/* Info Icon with Tooltip */}
+                    <div className="relative group mt-5">
+                      <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-gray-500 cursor-pointer"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                      >
+                        <path
+                            fillRule="evenodd"
+                            d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm.75 5.25a.75.75 0 01-1.5 0v-.5a.75.75 0 011.5 0zm-.558 9.5a.809.809 0 01-.064-.128l-.035-.126v-4.631l.035-.125c.02-.07.045-.128.064-.129h.317c.244 0 .451.093.62.273.169.18.253.392.253.637v4.142c0 .245-.084.457-.253.637-.169.18-.376.273-.62.273h-.317zM12 14.57c-.532 0-.91-.378-.91-.867s.378-.867.91-.867c.533 0 .91.378.91.867s-.377.867-.91.867z"
+                            clipRule="evenodd"
+                        />
+                      </svg>
+                      <div
+                          className="absolute hidden group-hover:block w-max bg-gray-700 text-white text-xs rounded p-2 shadow-md -top-10 left-0 z-50"
+                      >
+                        Only Name &amp; Surname should be searched (without Dr / Dr.).
+                      </div>
+                    </div>
+                  </div>                </div>
 
                 {/* Search Input - Consistent width */}
                 <div className="relative mt-6 group transition-all duration-500 w-full">
