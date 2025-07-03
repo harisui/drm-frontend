@@ -10,7 +10,7 @@ import DoctorCard from './_components/DoctorCard';
 import SearchBar from './_components/SearchBar';
 import LocationFilter from './_components/LocationFilter';
 import { getCountryName, getCountryFlag, getScoreColor } from '@/lib/utils';
-import Loader from './_components/Loader';
+import Loader from '@/components/loader/loader';
 
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");

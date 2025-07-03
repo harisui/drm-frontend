@@ -12,7 +12,8 @@ import { Doctor, Report } from "@/types";
 import PrintableReport from "./_components/printable-report";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import LoadingScreen from '@/components/ui/loader/page';
+import Loader from '@/components/loader/loader';
+
 const FullReport = () => {
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [mouseLeaving, setMouseLeaving] = useState(false);
@@ -226,26 +227,26 @@ const FullReport = () => {
                     const checkCharts = () => {
                         const svgElements = tempDiv.querySelectorAll('svg');
                         const hasCharts = svgElements.length > 0;
-                        
+
                         if (hasCharts) {
                             // Check if all SVG elements have actual content
                             const allChartsReady = Array.from(svgElements).every(svg => {
                                 const paths = svg.querySelectorAll('path, rect, circle, line');
                                 return paths.length > 0;
                             });
-                            
+
                             if (allChartsReady) {
                                 resolve();
                                 return;
                             }
                         }
-                        
+
                         // If no charts or not ready, wait a bit more
                         setTimeout(checkCharts, 500);
                     };
-                    
+
                     checkCharts();
-                    
+
                     // Failsafe: resolve after 10 seconds max
                     setTimeout(() => resolve(), 10000);
                 });
@@ -268,11 +269,11 @@ const FullReport = () => {
                 windowHeight: 1123,
                 logging: true, // Enable logging to debug
                 // Force rendering of SVG elements
-                onrendered: function(canvas) {
+                onrendered: function (canvas) {
                     console.log('Canvas rendered successfully');
                 },
                 // Handle SVG elements specifically
-                ignoreElements: function(element) {
+                ignoreElements: function (element) {
                     // Don't ignore any elements
                     return false;
                 }
@@ -296,12 +297,12 @@ const FullReport = () => {
             pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
 
             pdf.save(`${params._nme.replace(/\s+/g, '_')}_Report.pdf`);
-            
+
             console.log('PDF generated successfully');
-            
+
         } catch (error) {
             console.error('Error generating PDF:', error);
-            
+
             // More specific error handling
             if (error.message.includes('Canvas')) {
                 alert('Failed to capture the report content. Please try again.');
@@ -314,7 +315,11 @@ const FullReport = () => {
     };
 
     if (isLoading) {
-        return <LoadingScreen justLoader={true}/>;
+        return (
+            <div className="flex justify-center items-center min-h-screen w-full">
+                <Loader />
+            </div>
+        );
     }
 
     return (

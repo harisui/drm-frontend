@@ -58,16 +58,22 @@ const Header = () => {
                                 count={wishlistCount}
                                 wishlistItems={wishlistItems}
                                 onRemove={removeFromWishlist}
+                                onGenerateReport={() => { }}
+                                onGenerateAllReports={() => { }}
                             />
 
                             {/* Language Selector */}
                             <div className="relative">
-                                <button className="flex mt-1 items-center space-x-1 p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                                <button
+                                    className="flex items-center justify-center p-0 w-8 h-8"
+                                    aria-label="Change language"
+                                >
                                     <Image
                                         src="/flags/us.svg"
                                         alt="English"
                                         width={32}
                                         height={32}
+                                        className="shadow-md"
                                     />
                                 </button>
                             </div>
