@@ -13,7 +13,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ value, onChange, onFocus, onBlur,
     <div className="relative mt-6 group transition-all duration-500 w-full">
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 transition-all duration-300 ${isSearchFocused ? 'left-6 h-7 w-7' : ''}`}
+            className={`absolute left-4 top-6 sm:top-8 h-6 w-6 -translate-y-1/2 text-gray-400 transition-all duration-300 ${isSearchFocused ? 'left-6 h-7 w-7' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
