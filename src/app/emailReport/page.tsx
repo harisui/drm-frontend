@@ -1,12 +1,12 @@
-"use client"
-import React, {Suspense, useEffect, useState} from "react";
+"use client";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import LoadingScreen from "@/components/ui/loader/page";
+import Loader from "@/components/ui/loader/loader";
 import {
   extractParamsFromUrl,
   fetchReportData,
   fetchSpecialtyData,
-  getSlugFromProfileLink
+  getSlugFromProfileLink,
 } from "@/services/paramsHelper";
 
 const EmailReport = () => {
@@ -17,17 +17,19 @@ const EmailReport = () => {
   const [email, setEmail] = useState("");
 
   const doctorName = searchParams.get("_nme");
-  const [params, setParams] = useState<ReturnType<typeof extractParamsFromUrl>>({
-    _spt: "",
-    _spt_slug: "",
-    _nme: "",
-    _ct: "",
-    _st: "",
-    _rt: 0,
-    slug: "",
-    _sr: "",
-    lang: "en",
-  });
+  const [params, setParams] = useState<ReturnType<typeof extractParamsFromUrl>>(
+    {
+      _spt: "",
+      _spt_slug: "",
+      _nme: "",
+      _ct: "",
+      _st: "",
+      _rt: 0,
+      slug: "",
+      _sr: "",
+      lang: "en",
+    }
+  );
 
   const [specialtyData, setSpecialtyData] = useState<any[]>([]);
   const [report, setReport] = useState<null>(null);
@@ -47,12 +49,18 @@ const EmailReport = () => {
 
       try {
         // 1. Fetch specialty data
-        const specialtyResults = await fetchSpecialtyData(params._spt_slug, params._sr);
+        const specialtyResults = await fetchSpecialtyData(
+          params._spt_slug,
+          params._sr
+        );
         setSpecialtyData(specialtyResults);
 
         // Fallback to different specialty
         if (specialtyResults.length === 0) {
-          const fallbackSpecialty = await fetchSpecialtyData("physician", params._sr);
+          const fallbackSpecialty = await fetchSpecialtyData(
+            "physician",
+            params._sr
+          );
           setSpecialtyData(fallbackSpecialty);
         }
 
@@ -67,7 +75,6 @@ const EmailReport = () => {
         const fetchedReport = await fetchReportData(identifier, params._sr);
 
         // TODO Can be continoued in future, fetchedReport variable is useless for now
-
       } catch (error) {
         console.warn("Error:", error);
         setError("Failed to fetch data");
@@ -79,8 +86,7 @@ const EmailReport = () => {
     fetchAllData();
   }, [params]);
 
-  if (isLoading) return <LoadingScreen />;
-
+  if (isLoading) return <Loader />;
 
   const navigateToFullReport = () => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -95,73 +101,77 @@ const EmailReport = () => {
   const isFormValid = email.trim() !== "" && email.includes("@") && isChecked;
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <Loader />;
   }
 
-
   return (
-      <section className="flex min-h-screen items-center justify-center bg-sky-100 p-6 sm:p-10 lg:p-20">
-        <div className="w-full max-w-4xl space-y-8 lg:space-y-10">
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-bold text-black sm:text-5xl md:text-6xl">
-              Success!
-            </h1>
-            <p className="mt-3 text-lg text-black sm:mt-4 sm:text-xl md:text-2xl">
-              The report on {doctorName} has been generated.
-            </p>
-          </div>
+    <section className="flex min-h-screen items-center justify-center bg-sky-100 p-6 sm:p-10 lg:p-20">
+      <div className="w-full max-w-4xl space-y-8 lg:space-y-10">
+        <div className="text-center lg:text-left">
+          <h1 className="text-4xl font-bold text-black sm:text-5xl md:text-6xl">
+            Success!
+          </h1>
+          <p className="mt-3 text-lg text-black sm:mt-4 sm:text-xl md:text-2xl">
+            The report on {doctorName} has been generated.
+          </p>
+        </div>
 
-          <div className="space-y-3">
-            {/* Email Form */}
-            <form className="flex w-full flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg sm:flex-row sm:items-stretch sm:gap-4 sm:p-6 md:rounded-3xl">
-              <div className="flex-1">
-                <label htmlFor="emailInput" className="sr-only">Email address</label>
-                <input
-                  type="email"
-                  id="emailInput"
-                  placeholder="Enter your email to get the report"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-full w-full py-4 text-lg placeholder-gray-400 focus:outline-none sm:py-5 sm:text-xl md:py-6"
-                  aria-label="Enter your email address to receive the report"
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => navigateToFullReport()}
-                disabled={!isFormValid}
-                className={`w-full rounded-xl bg-slate-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 sm:w-auto sm:px-8 sm:py-5 md:py-6 md:text-xl ${
-                  !isFormValid ? 'opacity-50 cursor-not-allowed hover:bg-slate-900' : ''
-                }`}
-              >
-                Get Report
-              </button>
-            </form>
-
-            {/* GDPR checkbox placed right below the form */}
-            <div className="flex items-center gap-3 text-base text-black px-2">
-              <input
-                type="checkbox"
-                id="gdprConsent"
-                className="w-5 h-5 accent-slate-900 flex-shrink-0"
-                checked={isChecked}
-                onChange={() => setIsChecked(!isChecked)}
-              />
-              <label htmlFor="gdprConsent" className="leading-snug flex-1">
-                I agree that my email will be stored and used to contact and provide me with the doctor report.
+        <div className="space-y-3">
+          {/* Email Form */}
+          <form className="flex w-full flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg sm:flex-row sm:items-stretch sm:gap-4 sm:p-6 md:rounded-3xl">
+            <div className="flex-1">
+              <label htmlFor="emailInput" className="sr-only">
+                Email address
               </label>
+              <input
+                type="email"
+                id="emailInput"
+                placeholder="Enter your email to get the report"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-full w-full py-4 text-lg placeholder-gray-400 focus:outline-none sm:py-5 sm:text-xl md:py-6"
+                aria-label="Enter your email address to receive the report"
+              />
             </div>
+
+            <button
+              type="button"
+              onClick={() => navigateToFullReport()}
+              disabled={!isFormValid}
+              className={`w-full rounded-xl bg-slate-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 sm:w-auto sm:px-8 sm:py-5 md:py-6 md:text-xl ${
+                !isFormValid
+                  ? "opacity-50 cursor-not-allowed hover:bg-slate-900"
+                  : ""
+              }`}
+            >
+              Get Report
+            </button>
+          </form>
+
+          {/* GDPR checkbox placed right below the form */}
+          <div className="flex items-center gap-3 text-base text-black px-2">
+            <input
+              type="checkbox"
+              id="gdprConsent"
+              className="w-5 h-5 accent-slate-900 flex-shrink-0"
+              checked={isChecked}
+              onChange={() => setIsChecked(!isChecked)}
+            />
+            <label htmlFor="gdprConsent" className="leading-snug flex-1">
+              I agree that my email will be stored and used to contact and
+              provide me with the doctor report.
+            </label>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
   );
 };
 
 const EmailReportWithSuspense = () => (
-    <Suspense fallback={<div>Loading...</div>}>
-      <EmailReport />
-    </Suspense>
+  <Suspense fallback={<div>Loading...</div>}>
+    <EmailReport />
+  </Suspense>
 );
 
 export default EmailReportWithSuspense;
