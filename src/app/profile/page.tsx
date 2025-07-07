@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import { Doctor, Report } from "@/types";
-import Loading from "../loading/page";
+// import Loading from "../loading/page";
 import {
   UserIcon,
   StarIcon,
@@ -17,6 +17,7 @@ import Image from "next/image";
 import { LanguageSwitcher } from "@/components/languageSwitcher/language-switcher";
 import {useRouter, useSearchParams} from "next/navigation";
 import {paymentPageUrlRenderer} from "@/services/helper";
+import Loader from "@/components/ui/loader/loader";
 
 const DoctorProfile = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -150,7 +151,7 @@ const DoctorProfile = () => {
   }, [params?._sr, params?.slug]);
 
   if (isLoading) {
-    return <Loading />;
+    return <Loader />;
   }
   if (error) {
     return <div>Error: {error}</div>;
