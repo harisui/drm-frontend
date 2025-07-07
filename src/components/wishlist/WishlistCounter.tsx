@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Heart, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { paymentPageUrlRenderer } from '@/services/helper';
@@ -22,10 +22,29 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isOpen]);
 
     return (
         <div className="relative left-2">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 text-primary-dark hover:text-red-500 transition-colors"
             >
@@ -40,6 +59,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
             {/* Wishlist Dropdown */}
             {isOpen && (
                 <div
+                    ref={dropdownRef}
                     className="md:w-96 max-sm:fixed max-sm:w-full md:absolute scroll-thin max-h-[300px] overflow-y-auto right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <div className="p-4">
                         {/* <div className="flex justify-between items-center mb-4">
@@ -81,7 +101,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                                         <div className="flex items-center gap-2 space-y-2">
 
                                             <button
-                                                onClick={() => paymentPageUrlRenderer(item, item.source, router)}
+                                                onClick={() => { paymentPageUrlRenderer(item, item.source, router); setIsOpen(false); }}
                                                 className="text-primary bg-[#ADD8FF] px-5 py-1 rounded-md text-sm flex items-center space-x-1"
                                             >
                                                 <span>Generate</span>

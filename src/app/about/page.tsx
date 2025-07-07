@@ -31,14 +31,6 @@ const AboutPage = () => {
         <main className="min-h-screen bg-[#EDF3FF]">
             {/* Hero Section */}
             <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/about-hero.jpg"
-                        alt="Healthcare professionals"
-                        fill
-                        className="object-cover opacity-20"
-                    />
-                </div>
                 <div className="relative z-10 text-center px-4">
                     <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6">
                         About Trust Your Doctor

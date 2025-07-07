@@ -52,14 +52,6 @@ const HowItWorksPage = () => {
         <main className="min-h-screen bg-[#EDF3FF]">
             {/* Hero Section */}
             <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/how-it-works-hero.jpg"
-                        alt="How it works"
-                        fill
-                        className="object-cover opacity-20"
-                    />
-                </div>
                 <div className="relative z-10 text-center px-4">
                     <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6">
                         How It Works
