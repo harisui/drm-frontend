@@ -73,14 +73,14 @@ const FullReport = () => {
     });
   }, []);
 
-  const fetchSpecialtyData = async (specialty: string) => {
-    const response = await fetch(
-      `${API_BASE_URL}/doctors/speciality/?source=${params._sr}&speciality=${specialty}`
-    );
-    const data = await response.json();
-    setSpecialtyData(data?.results || []);
-    return data?.results || [];
-  };
+  // const fetchSpecialtyData = async (specialty: string) => {
+  //   const response = await fetch(
+  //     `${API_BASE_URL}/doctors/speciality/?source=${params._sr}&speciality=${specialty}`
+  //   );
+  //   const data = await response.json();
+  //   setSpecialtyData(data?.results || []);
+  //   return data?.results || [];
+  // };
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -92,10 +92,10 @@ const FullReport = () => {
       try {
         // Replicate profile page's data fetching flow
         // 1. Fetch specialty data first
-        const speciality = await fetchSpecialtyData(params._spt_slug);
-        if (speciality?.length === 0) {
-          await fetchSpecialtyData("physician");
-        }
+        // const speciality = await fetchSpecialtyData(params._spt_slug);
+        // if (speciality?.length === 0) {
+        //   await fetchSpecialtyData("physician");
+        // }
 
         // 2. Fetch report data with proper slug handling
         let identifier = params.slug;
