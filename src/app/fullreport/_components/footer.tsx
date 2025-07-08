@@ -91,7 +91,8 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
 
                                     <button
                                         onClick={() => paymentPageUrlRenderer(doctor, doctor.source, router)}
-                                        className="mt-4 w-full bg-[#14183E] text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors"
+                                        className="mt-4 w-full bg-[#14183E] text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors disabled:opacity-50"
+                                        disabled={score == 0}
                                     >
                                         Generate Report
                                     </button>

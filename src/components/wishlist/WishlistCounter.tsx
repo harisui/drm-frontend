@@ -102,7 +102,8 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
 
                                             <button
                                                 onClick={() => { paymentPageUrlRenderer(item, item.source, router); setIsOpen(false); }}
-                                                className="text-primary bg-[#ADD8FF] px-5 py-1 rounded-md text-sm flex items-center space-x-1"
+                                                className="text-primary bg-[#ADD8FF] px-5 py-1 rounded-md text-sm flex items-center space-x-1 disabled:opacity-50"
+                                                disabled={!item.rating || item.rating === 0}
                                             >
                                                 <span>Generate</span>
                                             </button>
