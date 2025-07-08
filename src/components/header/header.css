@@ -1,22 +1,79 @@
-.logo {
-    font-size: 30px;
-    color: #0F152B;
-    font-weight: 500;
-}
-
+/* Base Header */
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px 0;
-    z-index: 1000;
-    transition: all 0.3s ease;
-    background: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  padding: 5px 0;
+  background-color: transparent;
+  color: #1f2937;
+  transition: all 0.3s ease;
 }
 
-.header.scrolled {
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 15px 0;
+/* Scrolled or Menu Open */
+.header.scrolled,
+.header.menu-open {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Links */
+.nav-link {
+    font-weight: 600;
+  transition: color 0.3s ease;
+  color: inherit;
+}
+.header.scrolled .nav-link,
+.header.menu-open .nav-link {
+  color: #1f2937;
+}
+
+/* Logo */
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+.header.scrolled .logo,
+.header.menu-open .logo {
+  color: #2563eb;
+}
+
+/* Icon buttons */
+.icon-button {
+  color: inherit;
+  transition: color 0.3s ease;
+}
+.header.scrolled .icon-button,
+.header.menu-open .icon-button {
+  color: #1f2937;
+}
+
+/* Language button */
+.lang-button {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 0.25rem;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+.lang-button:hover {
+  border-color: #60a5fa; /* blue-400 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Menu */
+.mobile-nav {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.mobile-nav.open {
+  max-height: 500px;
 }
