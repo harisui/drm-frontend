@@ -72,17 +72,17 @@ const DoctorSearch = () => {
   };
 
   useEffect(() => {
+    // runs ONLY on the client
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
     if (params.get("e_ser") === "t") {
-      // Focus the search bar
       searchInputRef.current?.focus();
 
-      // Replace the URL param to e_ser=f
+      // Change param to e_ser=f
       params.set("e_ser", "f");
-      router.replace(`/?${params.toString()}`);
+      window.history.replaceState(null, "", `/?${params.toString()}`);
     }
-  }, [location.search]);
+  }, [router]);
 
 
   useEffect(() => {
