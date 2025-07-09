@@ -73,7 +73,7 @@ const DoctorSearch = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     if (params.get("e_ser") === "t") {
       // Focus the search bar
       searchInputRef.current?.focus();
@@ -82,7 +82,7 @@ const DoctorSearch = () => {
       params.set("e_ser", "f");
       router.replace(`/?${params.toString()}`);
     }
-  }, [window.location.search]);
+  }, [location.search]);
 
 
   useEffect(() => {
