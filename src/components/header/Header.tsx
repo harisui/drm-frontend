@@ -16,6 +16,7 @@ const Header = () => {
 
   const router = useRouter(); // Add this line
   const handleSearchIconClick = () => {
+    setMenuOpen(false)
     router.push("/?e_ser=t");
   };
 
@@ -61,7 +62,7 @@ const Header = () => {
             <div className="hidden md:flex items-center space-x-4">
               <button className="icon-button" onClick={handleSearchIconClick}>
                 <Search size={20} />
-              </button>
+               </button>
               <WishlistCounter
                 count={wishlistCount}
                 wishlistItems={wishlistItems}
@@ -107,7 +108,7 @@ const Header = () => {
             </Link>
 
             <div className="pt-4 flex items-center space-x-4">
-              <button className="icon-button">
+              <button className="icon-button" onClick={handleSearchIconClick}>
                 <Search size={20} />
               </button>
               <WishlistCounter

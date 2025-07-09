@@ -98,7 +98,13 @@ const EmailReport = () => {
   };
 
   // Check if email is valid and checkbox is checked
-  const isFormValid = email.trim() !== "" && email.includes("@") && isChecked;
+// Utility email validation function: returns true if valid, false otherwise
+  function isValidEmail(email: string): boolean {
+    // Requires at least 2 characters for the TLD part (after the last dot)
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+  }
+
+  const isFormValid = isValidEmail(email) && isChecked;
 
   if (isLoading) {
     return <Loader />;
