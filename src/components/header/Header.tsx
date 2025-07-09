@@ -7,11 +7,18 @@ import Image from "next/image";
 import "./header.css";
 import WishlistCounter from "../wishlist/WishlistCounter";
 import { useWishlist } from "@/context/WishlistContext";
+import {useRouter} from "next/navigation";
 
 const Header = () => {
   const { wishlistCount, wishlistItems, removeFromWishlist } = useWishlist();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const router = useRouter(); // Add this line
+  const handleSearchIconClick = () => {
+    router.push("/?e_ser=t");
+  };
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +59,7 @@ const Header = () => {
 
             {/* Icons (Desktop only) */}
             <div className="hidden md:flex items-center space-x-4">
-              <button className="icon-button">
+              <button className="icon-button" onClick={handleSearchIconClick}>
                 <Search size={20} />
               </button>
               <WishlistCounter

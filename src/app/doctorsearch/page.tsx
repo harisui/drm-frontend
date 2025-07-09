@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Doctor } from "@/types";
@@ -10,6 +10,7 @@ import DoctorCard from "./_documents/DoctorCard";
 import SearchBar from "./_documents/SearchBar";
 import LocationFilter from "./_documents/LocationFilter";
 import Loader from "@/components/ui/loader/loader";
+
 
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -69,6 +70,23 @@ const DoctorSearch = () => {
         return countrySlug?.toUpperCase() || "";
     }
   };
+
+  const queryparams = useSearchParams();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    // console.log(params.get("e_ser"));
+    if (params.get("e_ser") === "t") {
+      // Focus the search bar
+      searchInputRef.current?.focus();
+
+      // Replace the URL param to e_ser=f
+      params.set("e_ser", "f");
+      router.replace(`/?${params.toString()}`);
+    }
+  }, [queryparams]);
+
 
   useEffect(() => {
     // Extract unique states, cities, and countries from doctors data
