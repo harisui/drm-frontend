@@ -1,5 +1,5 @@
 "use client";
-import {useRouter, useSearchParams} from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Doctor } from "@/types";
@@ -10,7 +10,6 @@ import DoctorCard from "./_documents/DoctorCard";
 import SearchBar from "./_documents/SearchBar";
 import LocationFilter from "./_documents/LocationFilter";
 import Loader from "@/components/ui/loader/loader";
-
 
 const DoctorSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -83,7 +82,6 @@ const DoctorSearch = () => {
       window.history.replaceState(null, "", `/?${params.toString()}`);
     }
   }, [router]);
-
 
   useEffect(() => {
     // Extract unique states, cities, and countries from doctors data
@@ -211,7 +209,16 @@ const DoctorSearch = () => {
       }
     }, 100);
   };
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const query = searchParams.get("query");
 
+    if (query) {
+      setSearchText(query);
+      setSearchQuery(query);
+      fetchDoctors(query);
+    }
+  }, [searchParams]);
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8">
       <div className="mx-auto mt-28">
