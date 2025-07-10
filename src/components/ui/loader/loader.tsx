@@ -59,9 +59,8 @@ const Loader: React.FC = () => {
         {steps.map((step, index) => (
           <div
             key={index}
-            className={`flex flex-row items-start gap-2 transition-all duration-500 ${
-              index < progress ? "text-black" : "text-gray-300"
-            }`}
+            className={`flex flex-row px-4 items-start gap-2 transition-all duration-500 ${index < progress ? "text-black" : "text-gray-300"
+              }`}
           >
             <span className="inline-flex w-7 h-7 items-start justify-center pt-1">
               {index < progress ? (
