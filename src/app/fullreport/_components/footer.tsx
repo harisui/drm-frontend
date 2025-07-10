@@ -25,19 +25,28 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
         <footer className="bg-[#0F152B] py-8 px-4">
             {/* Buttons Section */}
             <div className="flex flex-col items-center gap-4">
-                <button className="bg-white px-6 py-5 text-xl font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+                {/* Scan Another Doctor Button */}
+                <button
+                    className="bg-white px-6 py-5 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
+                >
                     Scan Another Doctor
                 </button>
-                <button onClick={onDownload} className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors">
-                    <Download size={24} />
+
+                {/* Download Report Button */}
+                <button
+                    onClick={onDownload}
+                    className="flex items-center gap-2 px-5 py-3 text-white border border-gray-300 bg-white/10 rounded-md backdrop-blur-sm hover:bg-white/20 hover:border-white transition-all duration-300"
+                >
+                    <Download size={22} />
                     <span>{isGeneratingPDF ? "Generating..." : "Download Report"}</span>
                 </button>
             </div>
 
+
             {/* Previously Liked Section */}
             <div className="mb-8 mt-12">
                 <h3 className="text-white text-2xl font-bold mb-6">Previously Liked</h3>
-                
+
                 {/* Wishlist Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-[1440px] mx-auto">
                     {wishlistItems.length > 0 ? (
@@ -45,7 +54,7 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
                             const score = doctor.rating ? (doctor.rating * 2).toFixed(1) : 0;
 
                             return (
-                                <div 
+                                <div
                                     key={doctor.id}
                                     className="bg-[#ADD8FF] rounded-3xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 relative"
                                 >

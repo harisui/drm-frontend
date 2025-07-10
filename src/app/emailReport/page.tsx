@@ -98,7 +98,7 @@ const EmailReport = () => {
   };
 
   // Check if email is valid and checkbox is checked
-// Utility email validation function: returns true if valid, false otherwise
+  // Utility email validation function: returns true if valid, false otherwise
   function isValidEmail(email: string): boolean {
     // Requires at least 2 characters for the TLD part (after the last dot)
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
@@ -137,6 +137,7 @@ const EmailReport = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-full w-full py-4 text-lg placeholder-gray-400 focus:outline-none sm:py-5 sm:text-xl md:py-6"
                 aria-label="Enter your email address to receive the report"
+                autoComplete="off"
               />
             </div>
 
@@ -144,11 +145,10 @@ const EmailReport = () => {
               type="button"
               onClick={() => navigateToFullReport()}
               disabled={!isFormValid}
-              className={`w-full rounded-xl bg-slate-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 sm:w-auto sm:px-8 sm:py-5 md:py-6 md:text-xl ${
-                !isFormValid
-                  ? "opacity-50 cursor-not-allowed hover:bg-slate-900"
-                  : ""
-              }`}
+              className={`w-full rounded-xl bg-slate-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 sm:w-auto sm:px-8 sm:py-5 md:py-6 md:text-xl ${!isFormValid
+                ? "opacity-50 cursor-not-allowed hover:bg-slate-900"
+                : ""
+                }`}
             >
               Get Report
             </button>

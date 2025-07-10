@@ -8,6 +8,31 @@
     color: var(--text-primary);
 }
 
+/* Responsive H1 for smaller screens */
+@media screen and (max-width: 1200px) {
+    .dr_intro h1 {
+        font-size: 60px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .dr_intro h1 {
+        font-size: 50px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .dr_intro h1 {
+        font-size: 40px;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .dr_intro h1 {
+        font-size: 32px;
+    }
+}
+
 .key-insights {
     margin: 50px 0;
 }
@@ -17,4 +42,35 @@
     font-size: 40px;
     font-weight: 700;
     margin-bottom: 20px;
+}
+
+/* Responsive font sizes for .reports_heading */
+@media screen and (max-width: 1200px) {
+    .reports_heading {
+        font-size: 36px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .reports_heading {
+        font-size: 32px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .reports_heading {
+        font-size: 28px;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .reports_heading {
+        font-size: 24px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .reports_heading {
+        font-size: 20px;
+    }
 }
