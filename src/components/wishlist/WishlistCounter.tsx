@@ -60,8 +60,17 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    className="md:w-96 max-sm:fixed max-sm:w-full md:absolute scroll-thin max-h-[300px] overflow-y-auto right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                    <div className="p-4">
+                    className="md:w-96 max-sm:fixed max-sm:left-1/2 max-sm:top-1/3 shadow-lg max-sm:bottom-auto max-sm:right-auto max-sm:w-[95vw] max-sm:max-w-sm max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 md:absolute scroll-thin max-h-[300px] overflow-y-auto right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                >
+                    <div className="p-4 relative">
+                        {/* Close button for mobile */}
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="sm:hidden absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            aria-label="Close wishlist"
+                        >
+                            <X size={24} />
+                        </button>
                         {/* <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-semibold">Wishlist ({count})</h3>
                             <button
@@ -73,7 +82,7 @@ const WishlistCounter: React.FC<WishlistCounterProps> = ({
                         </div> */}
 
                         {wishlistItems.length > 0 ? (
-                            <div className="space-y-3 max-h-96 overflow-y-auto">
+                            <div className="space-y-4 max-h-96 overflow-y-auto">
                                 {wishlistItems.map((item) => (
                                     <div
                                         key={item.id}
