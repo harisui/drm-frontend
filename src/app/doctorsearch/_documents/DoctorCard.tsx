@@ -71,25 +71,21 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
       {/* Stats Grid */}
       <div className="grid grid-cols-3 gap-2">
         <div
-          className={`p-2 ${getScoreColor(Number(score))} rounded-lg shadow-sm`}
+          className={`p-2 ${getScoreColor(Number(score))} rounded-lg shadow-sm flex flex-col items-center justify-center min-h-[56px]`}
         >
-          <div>
-            <p className="text-white">Score</p>
-            <div className="flex items-center justify-center">
-              <span className="text-3xl font-bold text-white">{score}</span>
-              <span className="text-md mt-4 text-white">/10</span>
-            </div>
+          <p className="text-white text-xs font-normal mb-1">Score</p>
+          <div className="flex items-center justify-center flex-wrap">
+            <span className="text-lg font-semibold text-white leading-none">{score}</span>
+            <span className="text-xs text-white ml-1 self-end">/10</span>
           </div>
         </div>
-        <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-          <p className="text-primary">Reviews</p>
-          <p className="text-3xl text-center font-bold text-primary">
-            {doctor.reviewCount || 0}
-          </p>
+        <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm flex flex-col items-center justify-center min-h-[56px]">
+          <p className="text-primary text-xs font-normal mb-1">Reviews</p>
+          <span className="text-lg font-semibold text-primary leading-none">{doctor.reviewCount || 0}</span>
         </div>
-        <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-          <p className="text-primary text-xs">Experience</p>
-          <p className="text-3xl text-center font-bold text-primary">10+</p>
+        <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm flex flex-col items-center justify-center min-h-[56px]">
+          <p className="text-primary text-xs font-normal mb-1">Experience</p>
+          <span className="text-lg font-semibold text-primary leading-none">10+</span>
         </div>
       </div>
 
