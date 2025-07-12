@@ -24,14 +24,14 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
     return (
         <footer className="bg-[#0F152B] py-8 px-4">
             {/* Buttons Section */}
-            <div className="flex flex-col items-center gap-4">
-                <button className="bg-white px-6 py-5 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                <button className="px-6 py-4 min-w-[220px] text-lg font-semibold rounded-lg shadow-md bg-white text-[#0F152B] hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out text-center">
                     Scan Another Doctor
                 </button>
 
                 <button
                     onClick={onDownload}
-                    className="flex items-center gap-2 px-5 py-3 text-white border border-gray-300 bg-white/10 rounded-md backdrop-blur-sm hover:bg-white/20 hover:border-white transition-all duration-300"
+                    className="px-6 py-4 min-w-[220px] text-lg font-semibold flex items-center justify-center gap-2 text-white border border-gray-300 bg-white/10 rounded-lg backdrop-blur-sm hover:bg-white/20 hover:border-white transition-all duration-300 text-center"
                 >
                     <Download size={22} />
                     <span>{isGeneratingPDF ? "Generating..." : "Download Report"}</span>
@@ -39,14 +39,12 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
             </div>
 
             {/* Previously Liked Section */}
-            <div className="mb-8 mt-12 max-w-[1440px] mx-auto px-4">
-                {/* Heading - Centered and well-spaced */}
+            <div className="mb-8 max-w-[1440px] mx-auto px-4">
                 <h3 className="text-white text-2xl font-bold mb-6 text-center sm:text-left">
                     Previously Liked
                 </h3>
 
-                {/* Cards Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                     {wishlistItems.length > 0 ? (
                         wishlistItems.map((doctor) => {
                             const score = doctor.rating
@@ -56,56 +54,66 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
                             return (
                                 <div
                                     key={doctor.id}
-                                    className="bg-[#ADD8FF] rounded-3xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 relative"
+                                    className="bg-[#ADD8FF] rounded-3xl shadow-md p-4 lg:p-6 hover:shadow-lg transition-shadow duration-300 relative flex flex-col min-h-[280px]"
                                 >
                                     <button
                                         onClick={() => removeFromWishlist(doctor.id)}
-                                        className="absolute top-4 right-4 p-2"
+                                        className="absolute top-3 right-3 lg:top-4 lg:right-4 p-1 lg:p-2 z-10"
                                     >
-                                        <Heart size={26} fill="#0F152B" className="text-[#0F152B]" />
+                                        <Heart
+                                            size={20}
+                                            fill="#0F152B"
+                                            className="text-[#0F152B] lg:w-6 lg:h-6"
+                                        />
                                     </button>
 
-                                    <div className="flex items-center space-x-3 mb-4">
-                                        <h3 className="text-xl font-bold text-primary">
+                                    <div className="flex items-start space-x-2 lg:space-x-3 mb-3 lg:mb-4 pr-8">
+                                        <h3 className="text-lg lg:text-xl font-bold text-primary leading-tight break-words">
                                             {doctor.name}
                                         </h3>
                                     </div>
 
-                                    <div className="mb-4">
-                                        <p className="font-semibold text-xl text-primary">
+                                    <div className="mb-3 lg:mb-4 flex-1">
+                                        <p className="font-semibold text-base lg:text-xl text-primary leading-tight break-words">
                                             {doctor.specialty || "N/A"}
                                         </p>
-                                        <p className="text-sm text-primary">
+                                        <p className="text-xs lg:text-sm text-primary mt-1">
                                             {doctor.city ? `${doctor.city}, ` : ""}
                                             {doctor.state || ""}
                                         </p>
                                     </div>
 
-                                    <div className="grid grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-3 gap-1 lg:gap-2 mb-3 lg:mb-4">
                                         <div
-                                            className={`p-2 ${getScoreColor(
+                                            className={`p-2 lg:p-3 ${getScoreColor(
                                                 Number(score)
-                                            )} rounded-lg shadow-sm`}
+                                            )} rounded-lg shadow-sm flex flex-col items-center justify-center min-h-[60px] lg:min-h-[80px]`}
                                         >
-                                            <p className="text-white">Score</p>
-                                            <div className="flex items-center justify-center">
-                                                <span className="text-4xl font-bold text-white">{score}</span>
-                                                <span className="text-md mt-4 text-white">/10</span>
+                                            <p className="text-white text-xs font-normal mb-1">Score</p>
+                                            <div className="flex items-center justify-center flex-wrap">
+                                                <span className="text-lg lg:text-xl font-semibold text-white leading-none">
+                                                    {score}
+                                                </span>
+                                                <span className="text-xs text-white ml-1 self-end">/10</span>
                                             </div>
                                         </div>
 
-                                        <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-                                            <p className="text-primary">Reviews</p>
-                                            <p className="text-4xl text-center font-bold text-primary">
-                                                {doctor.reviewCount || 0}
-                                            </p>
+                                        <div className="p-2 lg:p-3 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm flex flex-col items-center justify-center min-h-[60px] lg:min-h-[80px]">
+                                            <p className="text-primary text-xs font-normal mb-1">Reviews</p>
+                                            <div className="flex items-center justify-center">
+                                                <span className="text-lg lg:text-xl font-semibold text-primary leading-none">
+                                                    {doctor.reviewCount || 0}
+                                                </span>
+                                            </div>
                                         </div>
 
-                                        <div className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
-                                            <p className="text-primary text-xs">Experience</p>
-                                            <p className="text-4xl text-center font-bold text-primary">
-                                                10+
-                                            </p>
+                                        <div className="p-2 lg:p-3 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm flex flex-col items-center justify-center min-h-[60px] lg:min-h-[80px]">
+                                            <p className="text-primary text-xs font-normal mb-1">Experience</p>
+                                            <div className="flex items-center justify-center">
+                                                <span className="text-lg lg:text-xl font-semibold text-primary leading-none">
+                                                    10+
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -113,7 +121,7 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
                                         onClick={() =>
                                             paymentPageUrlRenderer(doctor, doctor.source, router)
                                         }
-                                        className="mt-4 w-full bg-[#14183E] text-white py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors disabled:opacity-50"
+                                        className="mt-auto w-full bg-[#14183E] text-white py-2 lg:py-3 rounded-lg font-semibold hover:bg-[#14183E]/90 transition-colors disabled:opacity-50 text-sm lg:text-base"
                                         disabled={score === "0.0"}
                                     >
                                         Generate Report
@@ -129,19 +137,21 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
                 </div>
             </div>
 
-
-            {/* Footer Bottom Section */}
-            <div className="flex flex-col md:flex-row mt-20 justify-between px-6 gap-10">
+            {/* Footer Bottom Info Section */}
+            <div className="flex flex-col md:flex-row justify-between px-6 gap-10 max-w-[1440px] mt-20 mx-auto">
                 <div className="text-white max-w-lg">
-                    <h3 className="text-white font-semibold text-2xl">Header</h3>
+                    <h3 className="text-white pr-6 font-semibold text-2xl">Header</h3>
                     <p className="mt-2">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ornare
-                        cursus sed nunc eget dictum.
+                        cursus sed nunc eget dictum Sed ornare cursus sed nunc eget dictumd
+                        nunc eget dictum Sed ornare cursus sed nunc eget dictum
                     </p>
                 </div>
                 <div className="text-white">
-                    <h3 className="text-white font-semibold text-2xl">Header Text</h3>
-                    <div className="text-left text-lg mt-2 space-y-1">
+                    <h3 className="text-white text-center font-semibold text-2xl">
+                        Header Text
+                    </h3>
+                    <div className="text-center text-lg mt-2 space-y-1">
                         <p>Button</p>
                         <p>Button</p>
                         <p>Button</p>
@@ -149,6 +159,11 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
                         <p>Button</p>
                     </div>
                 </div>
+            </div>
+            {/* Footer Logo */}
+            <div className=" px-10 py-2 text-white">
+                <p className=" border-t pb-3 border-gray-500 mt-10"></p>
+                <span className="text-2xl font-bold">Logo</span>
             </div>
         </footer>
     );
