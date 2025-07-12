@@ -51,7 +51,7 @@ const Summary = ({
             </div>
           </div>
         </div>
-        <div className="mt-2 px-8 py-4">
+        <div className="mt-2 sm:px-8 px-6 py-4">
           <p className="text-sm text-gray-700">
             <span className="font-semibold text-primary">Disclaimer: </span>
             This is not medical advice. Please consult a healthcare professional for any medical concerns.
