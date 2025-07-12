@@ -209,16 +209,22 @@ const DoctorSearch = () => {
       }
     }, 100);
   };
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   useEffect(() => {
-    const query = searchParams.get("query");
 
-    if (query) {
-      setSearchText(query);
-      setSearchQuery(query);
-      fetchDoctors(query);
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("query")) {
+
+      const query = params.get("query");
+
+      if (query) {
+        setSearchText(query);
+        setSearchQuery(query);
+        fetchDoctors(query);
+      }
     }
-  }, [searchParams]);
+  }, [router]);
   return (
     <main className="min-h-screen bg-[#EDF3FF] px-4 py-8">
       <div className="mx-auto mt-28">
