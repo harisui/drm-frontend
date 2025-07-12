@@ -25,13 +25,13 @@ const Summary = ({
   return (
     <main className="bg-[#E5EEFB]">
       <div className="p-8">
-        <h2 className="reports_heading px-8">Summary</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-20">
           <div className="px-4 mt-5 text-lg text-primary md:px-8 md:col-span-2">
+            <h2 className="reports_heading">Summary</h2>
             <p className="text-justify">{summaryText || "No summary available."}</p>
           </div>
           <div className="px-4 md:px-8">
-            <h3 className="text-primary text-2xl font-semibold mb-3">
+            <h3 className="text-primary  font-semibold mb-3">
               {doctorName}
             </h3>
             <div className="flex items-center gap-4">

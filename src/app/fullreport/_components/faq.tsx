@@ -37,7 +37,7 @@ const FAQs = ({ params, report }: FAQsProps) => {
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -56,12 +56,12 @@ const FAQs = ({ params, report }: FAQsProps) => {
     return process.env.NEXT_PUBLIC_WS_URL;
   };
 
- const scrollToBottom = (behavior: ScrollBehavior = 'smooth', force: boolean = false) => {
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth', force: boolean = false) => {
     const container = messagesContainerRef.current;
     if (container) {
 
       const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-      
+
       if (force || isNearBottom || behavior === 'auto') {
         setTimeout(() => {
           container.scrollTo({
@@ -82,11 +82,11 @@ const FAQs = ({ params, report }: FAQsProps) => {
     try {
       setConnectionError(null);
       console.log('Attempting to connect to WebSocket...');
-      
+
       const wsUrl = getWebSocketUrl();
       console.log('Connecting to:', wsUrl);
       const ws = new WebSocket(wsUrl);
-      
+
       const connectionTimeout = setTimeout(() => {
         if (ws.readyState === WebSocket.CONNECTING) {
           ws.close();
@@ -100,7 +100,7 @@ const FAQs = ({ params, report }: FAQsProps) => {
         setIsConnected(true);
         setReconnectAttempts(0);
         setConnectionError(null);
-        
+
         try {
           ws.send(JSON.stringify({
             type: 'INIT_CHAT',
@@ -125,12 +125,12 @@ const FAQs = ({ params, report }: FAQsProps) => {
         console.log('WebSocket disconnected:', event.code, event.reason);
         setIsConnected(false);
         setIsBotTyping(false);
-        
+
         // Only attempt to reconnect if it wasn't a manual close and we haven't exceeded max attempts
         if (event.code !== 1000 && event.code !== 1001 && reconnectAttempts < maxReconnectAttempts) {
           const timeout = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000); // Max 30 seconds
           console.log(`Reconnecting in ${timeout}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
-          
+
           reconnectTimeoutRef.current = setTimeout(() => {
             setReconnectAttempts(prev => prev + 1);
             connectWebSocket();
@@ -143,7 +143,7 @@ const FAQs = ({ params, report }: FAQsProps) => {
       ws.onerror = (error) => {
         clearTimeout(connectionTimeout);
         console.error('WebSocket error occurred:', error);
-        
+
         if (wsRef.current?.readyState === WebSocket.CONNECTING) {
           setConnectionError('Failed to connect to chat service. Please check if the server is running.');
         } else {
@@ -165,28 +165,28 @@ const FAQs = ({ params, report }: FAQsProps) => {
       case 'CHAT_INITIALIZED':
         setMessages([{ role: 'bot', content: payload.message }]);
         break;
-      
+
       case 'BOT_TYPING':
         setIsBotTyping(payload.isTyping);
         if (payload.isTyping) {
           scrollToBottom('smooth', true);
         }
         break;
-      
+
       case 'BOT_RESPONSE':
         setIsBotTyping(false);
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
+        setMessages(prev => [...prev, {
+          role: 'bot',
           content: payload.message,
-          timestamp: payload.timestamp 
+          timestamp: payload.timestamp
         }]);
         break;
-      
+
       case 'ERROR':
         setIsBotTyping(false);
         setConnectionError(payload.message);
         break;
-      
+
       default:
         console.warn('Unknown message type:', type);
     }
@@ -197,7 +197,7 @@ const FAQs = ({ params, report }: FAQsProps) => {
     const connectionDelay = setTimeout(() => {
       connectWebSocket();
     }, 100);
-    
+
     return () => {
       clearTimeout(connectionDelay);
       if (reconnectTimeoutRef.current) {
@@ -231,7 +231,7 @@ const FAQs = ({ params, report }: FAQsProps) => {
     if (!messageText.trim() || isBotTyping || !isConnected) return;
 
     const newUserMessage: Message = { role: 'user', content: messageText };
-    
+
     setMessages(prev => [...prev, newUserMessage]);
 
     // Send message through WebSocket
@@ -273,25 +273,25 @@ const FAQs = ({ params, report }: FAQsProps) => {
   // Function to convert markdown-style formatting to HTML
   const formatMessage = (text: string) => {
     if (!text) return '';
-    
+
     // Convert **text** to <strong>text</strong>
     let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
+
     // Convert *text* to <em>text</em> (italic)
     formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
+
     // Convert bullet points • to proper list items
     formatted = formatted.replace(/^•\s*(.*)$/gm, '<li>$1</li>');
-    
+
     // Convert numbered lists
     formatted = formatted.replace(/^\d+\.\s*(.*)$/gm, '<li>$1</li>');
-    
+
     // Wrap lists in <ul> tags - using a different approach without 's' flag
     if (formatted.includes('<li>')) {
       const lines = formatted.split('\n');
       let inList = false;
       let result = '';
-      
+
       for (const line of lines) {
         if (line.includes('<li>')) {
           if (!inList) {
@@ -307,17 +307,17 @@ const FAQs = ({ params, report }: FAQsProps) => {
           result += line + '\n';
         }
       }
-      
+
       if (inList) {
         result += '</ul>';
       }
-      
+
       formatted = result;
     }
-    
+
     // Convert line breaks to <br> tags
     formatted = formatted.replace(/\n/g, '<br>');
-    
+
     return formatted;
   };
 
@@ -330,22 +330,23 @@ const FAQs = ({ params, report }: FAQsProps) => {
 
   return (
     <main className="max-w-4xl mx-auto p-6">
-      <h1 className="text-primary text-4xl text-center font-semibold mb-8">
+      <h1 className="text-primary text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center font-semibold mb-8">
         Ask About {params._nme}
       </h1>
-      
+
+
       <div className="flex items-center gap-1 mb-4">
         <Circle className={`w-4 h-4 ${isConnected ? 'fill-black' : 'fill-red-500'}`} />
         <p className="text-primary font-semibold">
           Doctor Information {isConnected ? '(Connected)' : '(Disconnected)'}
         </p>
       </div>
-      
+
 
       {connectionError && (
         <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg flex items-center justify-between">
           <span className="text-red-700">{connectionError}</span>
-          <button 
+          <button
             onClick={retryConnection}
             className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
           >
@@ -354,24 +355,23 @@ const FAQs = ({ params, report }: FAQsProps) => {
         </div>
       )}
 
-      <div 
+      <div
         ref={messagesContainerRef}
         className="h-96 overflow-y-auto mb-6 border rounded-xl p-4 bg-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
       >
         {messages.map((msg, i) => (
           <div key={i} className={`mb-4 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-            <div className={`inline-block max-w-[90%] p-4 rounded-2xl ${
-              msg.role === 'user' 
-                ? 'bg-blue-600 text-white rounded-br-none' 
+            <div className={`inline-block max-w-[90%] p-4 rounded-2xl ${msg.role === 'user'
+                ? 'bg-blue-600 text-white rounded-br-none'
                 : 'bg-gray-50 text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
-            }`}>
-              <div 
+              }`}>
+              <div
                 className="whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: formatMessage(replaceObjectObjectWithKeyPoints(msg.content)) }}
               />
               {msg.timestamp && (
                 <div className="text-xs mt-2 opacity-70">
-                  {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               )}
             </div>

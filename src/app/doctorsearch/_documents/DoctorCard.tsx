@@ -26,7 +26,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
       {/* Wishlist button */}
       <button
         onClick={() => onWishlistToggle(doctor)}
-        className="absolute top-4 right-4 p-2"
+        className="absolute top-4 right-4 p-2 z-10"
       >
         <Heart
           size={26}
@@ -37,7 +37,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
       </button>
 
       {/* Doctor Info Section */}
-      <div className="flex items-center space-x-3 mb-4">
+      <div className="flex items-start space-x-3 mb-4 pr-12">
         {/* <div className="w-15 h-15 flex items-center justify-center">
           <Image
             src={countryFlag}
@@ -46,19 +46,21 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
             height={35}
           />
         </div> */}
-        <div>
-          <h3 className="text-xl font-bold text-primary">{doctor.name}</h3>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-primary break-words leading-tight">
+            {doctor.name}
+          </h3>
         </div>
       </div>
 
       {/* Specialist Info */}
-      <div className="mb-4">
-        <p className="font-semibold text-xl text-primary">
+      <div className="mb-4 pr-2">
+        <p className="font-semibold text-xl text-primary break-words leading-tight">
           {Array.isArray(doctor.specialties)
             ? doctor.specialties.join(", ")
             : doctor.specialty || ""}
         </p>
-        <p className="text-sm text-primary">
+        <p className="text-sm text-primary break-words">
           {doctor.city}
           {doctor.city && (doctor.state || countryName) ? ", " : ""}
           {doctor.state || ""}
