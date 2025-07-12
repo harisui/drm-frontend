@@ -86,23 +86,9 @@ const Header = () => {
             {/* Icons (Desktop) */}
             <div className="hidden md:flex items-center space-x-4">
               {/* Search Icon */}
-              <button className="icon-button" onClick={() => setShowSearch(!showSearch)}>
+              <button className="icon-button" onClick={() => router.push('/doctorsearch?e_ser=t')}>
                 <Search size={20} />
               </button>
-
-              {/* Search Input */}
-              {showSearch && (
-                <form ref={searchBoxRef} onSubmit={handleSearchSubmit} className="relative">
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    className="border rounded px-3 py-1 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-[#333]"
-                    placeholder="Search doctors..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </form>
-              )}
 
               {/* Wishlist */}
               <WishlistCounter
@@ -162,18 +148,13 @@ const Header = () => {
             </Link>
 
             {/* Mobile Search */}
-            <form onSubmit={handleSearchSubmit} className="pt-2 flex items-center space-x-2">
-              <input
-                type="text"
-                className="border rounded px-3 py-1 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#333]"
-                placeholder="Search doctors..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="submit" className="icon-button">
-                <Search size={20} />
-              </button>
-            </form>
+            <button
+              className="icon-button w-full flex items-center gap-2 justify-center border rounded py-2 mt-2"
+              onClick={() => { closeMenu(); router.push('/doctorsearch?e_ser=t'); }}
+            >
+              <Search size={20} />
+              <span>Search Doctors</span>
+            </button>
 
             {/* Wishlist and Flag */}
             <div className="pt-4 flex items-center space-x-4">
