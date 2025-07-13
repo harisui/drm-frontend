@@ -86,7 +86,7 @@ const Header = () => {
             {/* Icons (Desktop) */}
             <div className="hidden md:flex items-center space-x-4">
               {/* Search Icon */}
-              <button className="icon-button" onClick={() => router.push('/doctorsearch?e_ser=t')}>
+              <button className="icon-button" onClick={() => router.push('/?e_ser=t')}>
                 <Search size={20} />
               </button>
 
