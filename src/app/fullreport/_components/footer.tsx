@@ -4,6 +4,7 @@ import { Download, Heart } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext";
 import { paymentPageUrlRenderer } from "@/services/helper";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface FooterProps {
     onDownload: () => void;
@@ -25,9 +26,9 @@ const Footer = ({ onDownload, isGeneratingPDF }: FooterProps) => {
         <footer className="bg-[#0F152B] py-8 px-4">
             {/* Buttons Section */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-                <button className="px-6 py-4 min-w-[220px] text-lg font-semibold rounded-lg shadow-md bg-white text-[#0F152B] hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out text-center">
+                <Link href={"/?e_ser=t"} className="px-6 py-4 min-w-[220px] text-lg font-semibold rounded-lg shadow-md bg-white text-[#0F152B] hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out text-center">
                     Scan Another Doctor
-                </button>
+                </Link>
 
                 <button
                     onClick={onDownload}
