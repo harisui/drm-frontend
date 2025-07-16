@@ -330,13 +330,13 @@ const FAQs = ({ params, report }: FAQsProps) => {
 
   return (
     <main className="max-w-4xl mx-auto p-6">
-      <h1 className="text-primary text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center font-semibold mb-8">
+      <h1 className="text-primary text-2xl sm:text-3xl md:text-4xl lg:text-5xl  font-semibold mb-8">
         Ask About {params._nme}
       </h1>
 
 
       <div className="flex items-center gap-1 mb-4">
-        <Circle className={`w-4 h-4 ${isConnected ? 'fill-black' : 'fill-red-500'}`} />
+        <Circle className={`w-4 h-4 ${isConnected ? 'fill-green-600' : 'fill-red-500'}`} />
         <p className="text-primary font-semibold">
           Doctor Information {isConnected ? '(Connected)' : '(Disconnected)'}
         </p>
@@ -362,8 +362,8 @@ const FAQs = ({ params, report }: FAQsProps) => {
         {messages.map((msg, i) => (
           <div key={i} className={`mb-4 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
             <div className={`inline-block max-w-[90%] p-4 rounded-2xl ${msg.role === 'user'
-                ? 'bg-blue-600 text-white rounded-br-none'
-                : 'bg-gray-50 text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
+              ? 'bg-blue-600 text-white rounded-br-none'
+              : 'bg-gray-50 text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
               }`}>
               <div
                 className="whitespace-pre-line"
